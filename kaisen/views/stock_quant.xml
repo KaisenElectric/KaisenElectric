@@ -6,11 +6,8 @@
         <field name="model">stock.quant</field>
         <field name="inherit_id" ref="stock.view_stock_quant_form_editable"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='package_id']" position="after">
-                <field name="stock_quant_package_ids" invisible="1"/>
-            </xpath>
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('id', 'in', stock_quant_package_ids), ('location_id', '=', location_id)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
             </xpath>
         </field>
     </record>
@@ -21,10 +18,7 @@
         <field name="inherit_id" ref="stock.view_stock_quant_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('id', 'in', stock_quant_package_ids), ('location_id', '=', location_id)]</attribute>
-            </xpath>
-            <xpath expr="//field[@name='package_id']" position="after">
-                <field name="stock_quant_package_ids" invisible="1"/>
+                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
             </xpath>
         </field>
     </record>
@@ -35,14 +29,11 @@
         <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('id', 'in', stock_quant_package_ids), ('location_id', '=', location_id)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='inventory_quantity_auto_apply']" position="attributes">
                 <attribute name="optional">show</attribute>
-            </xpath>
-            <xpath expr="//field[@name='package_id']" position="after">
-                <field name="stock_quant_package_ids" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='inventory_quantity_auto_apply']" position="before">
                 <field name="on_hand_package_quantity" optional="show"/>
@@ -59,14 +50,11 @@
         <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('id', 'in', stock_quant_package_ids), ('location_id', '=', location_id)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='quantity']" position="attributes">
                 <attribute name="optional">show</attribute>
-            </xpath>
-            <xpath expr="//field[@name='package_id']" position="after">
-                <field name="stock_quant_package_ids" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='quantity']" position="before">
                 <field name="package_quantity" optional="show"/>

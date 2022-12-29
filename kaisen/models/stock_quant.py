@@ -5,9 +5,6 @@ from odoo.tools.float_utils import float_round
 class StockQuant(models.Model):
     _inherit = "stock.quant"
 
-    stock_quant_package_ids = fields.Many2many(
-        comodel_name="stock.quant.package", compute="_compute_stock_quant_package_ids", string="Stock Quant Packages"
-    )
     on_hand_package_quantity = fields.Float(
         string="On Hand Package Quantity", compute="_compute_on_hand_package_quantity"
     )
@@ -18,14 +15,6 @@ class StockQuant(models.Model):
     counted_package_quantity = fields.Float(
         string="Counted Package Quantity", compute="_compute_counted_package_quantity"
     )
-
-    @api.depends("product_id")
-    def _compute_stock_quant_package_ids(self):
-        """Computes stock_quant_package_ids by quant packages in product"""
-        for record_id in self:
-            record_id.stock_quant_package_ids = record_id.product_id.packaging_ids.filtered(
-                lambda x: x.logismart_product_code
-            ).mapped("stock_quant_package_id")
 
     @api.depends("inventory_quantity_auto_apply")
     def _compute_on_hand_package_quantity(self):
