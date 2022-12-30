@@ -14,6 +14,7 @@
         "product",
         "base_address_extended",
         "account_sequence_option",
+        "sale",
     ],
     "data": [
         # SECURITY
