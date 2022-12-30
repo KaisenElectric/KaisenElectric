@@ -15,6 +15,7 @@
         "base_address_extended",
         "account_sequence_option",
         "sale",
+        "delivery",
     ],
     "data": [
         # SECURITY
@@ -27,6 +28,8 @@
         "views/purchase_order_views.xml",
         "views/sale_order_views.xml",
         "views/account_move_views.xml",
+        "views/delivery_carrier_views.xml",
+        "views/stock_move_line_views.xml",
         # WIZARDS
         # REPORTS
     ],
