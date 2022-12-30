@@ -9,6 +9,9 @@
             <xpath expr="//field[@name='product_packaging_id']" position="after">
                 <field name="product_packaging_qty"/>
             </xpath>
+            <xpath expr="//field[@name='backorder_id']" position="after">
+                <field name="is_send_data_to_logismart"/>
+            </xpath>
         </field>
     </record>
 

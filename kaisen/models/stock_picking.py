@@ -6,6 +6,8 @@ from odoo.addons.payment import utils as payment_utils
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+    is_send_data_to_logismart = fields.Boolean(string="Send data to Logismart", default=True)
+
     @api.constrains("state")
     def _check_state(self):
         """Checks field product_packaging_qty for integer when moving stock picking to done stage"""
@@ -14,9 +16,9 @@ class StockPicking(models.Model):
                 for move_id in record_id.move_ids_without_package:
                     if not move_id.product_packaging_qty.is_integer():
                         raise UserError("Packaging Quality must be whole number")
-                if record_id.picking_type_id.code == "incoming":
+                if record_id.picking_type_id.code == "incoming" and record_id.is_send_data_to_logismart:
                     record_id.create_arrival_in_logismart()
-                elif record_id.picking_type_id.code == "outgoing":
+                elif record_id.picking_type_id.code == "outgoing" and record_id.is_send_data_to_logismart:
                     record_id.create_order_in_logismart()
 
     def get_products_for_logismart(self):
@@ -26,10 +28,12 @@ class StockPicking(models.Model):
         for move_id in self.move_ids_without_package:
             product_code = move_id.get_logismart_product_code()
             if product_code and move_id.product_packaging_qty > 0:
+                if not move_id.product_packaging_qty.is_integer():
+                    raise UserError("Packaging Quality must be whole number")
                 products.append(
                     {
                         "product_code": product_code,
-                        "quantity": move_id.product_packaging_qty,
+                        "quantity": int(move_id.product_packaging_qty),
                     }
                 )
         return products
@@ -50,9 +54,13 @@ class StockPicking(models.Model):
         self.ensure_one()
         products = self.get_products_for_logismart()
         if products:
+            if not self.carrier_id:
+                raise UserError("Carrier field not filled")
+            if not self.carrier_id.logismart_delivery_method:
+                raise UserError("You need to fill in Logismart Shipping Method field in Carrier")
             first_name, last_name = payment_utils.split_partner_name(self.partner_id.name)
             delivery = {
-                "method": 1,
+                "method": self.carrier_id.logismart_delivery_method,
             }
             payload = {
                 "order_code": self.name,
