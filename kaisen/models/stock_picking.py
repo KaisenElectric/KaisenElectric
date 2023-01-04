@@ -34,10 +34,6 @@ class StockPicking(models.Model):
                     {
                         "product_code": product_code,
                         "quantity": int(move_id.product_packaging_qty),
-                        "customs_description": move_id.product_id.name,
-                        "customs_origin": "LT",
-                        "customs_currency": move_id.picking_id.sale_id.currency_id.name,
-                        "price": 0,
                     }
                 )
         return products
@@ -70,7 +66,7 @@ class StockPicking(models.Model):
                 "order_code": self.name,
                 "products": products,
                 "delivery": delivery,
-                "customer_code": "348",
+                "customer_code": f"{first_name} {last_name}",
                 "first_name": first_name,
                 "last_name": last_name,
                 "email": self.partner_id.email,
@@ -81,7 +77,5 @@ class StockPicking(models.Model):
                 "city": self.partner_id.city,
                 "country_code": self.partner_id.country_id.code,
                 "total": self.sale_id.amount_total,
-                "customs_parcel_type": "Sell",
-                "customs_description": self.name,
             }
             self.env["res.config.settings"].send_request_to_logismart("post", "/orders/add", payload)
