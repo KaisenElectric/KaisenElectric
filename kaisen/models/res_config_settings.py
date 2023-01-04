@@ -9,6 +9,8 @@ class ResConfigSettings(models.TransientModel):
 
     logismart_api_key = fields.Char(string="Logismart API Key")
     logismart_api_url = fields.Char(string="Logismart API URL")
+    logismart_username = fields.Char(string="Logismart Username")
+    logismart_password = fields.Char(string="Logismart Password")
 
     @api.model
     def set_values(self):
@@ -17,6 +19,8 @@ class ResConfigSettings(models.TransientModel):
         params = self.env["ir.config_parameter"].sudo()
         params.set_param("logismart_api_key", self.logismart_api_key)
         params.set_param("logismart_api_url", self.logismart_api_url)
+        params.set_param("logismart_username", self.logismart_username)
+        params.set_param("logismart_password", self.logismart_password)
         return result
 
     @api.model
@@ -28,6 +32,8 @@ class ResConfigSettings(models.TransientModel):
             {
                 "logismart_api_key": params.get_param("logismart_api_key"),
                 "logismart_api_url": params.get_param("logismart_api_url"),
+                "logismart_username": params.get_param("logismart_username"),
+                "logismart_password": params.get_param("logismart_password"),
             }
         )
         return result
@@ -36,12 +42,19 @@ class ResConfigSettings(models.TransientModel):
         """Sends request to logismart"""
         api_url = self.env["ir.config_parameter"].sudo().get_param("logismart_api_url")
         api_key = self.env["ir.config_parameter"].sudo().get_param("logismart_api_key")
+        username = self.env["ir.config_parameter"].sudo().get_param("logismart_username")
+        password = self.env["ir.config_parameter"].sudo().get_param("logismart_password")
+        if not api_url or not api_key or not username or not password:
+            raise UserError("Check fields for integration with Logismart in system settings")
         url = f"{api_url}{url}"
         headers = {
             "api-key": api_key,
             "Host": urlparse(url).hostname,
         }
-        response = requests.request(method, url, headers=headers, params=payload)
+        if method == "get":
+            response = requests.get(url, headers=headers, params=payload, auth=(username, password))
+        else:
+            response = requests.post(url, headers=headers, json=payload, auth=(username, password))
         data = response.json()
         if not response.ok:
             message = "Logismart Error\n" + data.get("error", "")
