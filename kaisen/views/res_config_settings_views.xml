@@ -20,6 +20,16 @@
                             <label for="logismart_api_url"/>
                             <field name="logismart_api_url"/>
                         </div>
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="logismart_username"/>
+                            <field name="logismart_username"/>
+                        </div>
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <label for="logismart_password"/>
+                            <field name="logismart_password"/>
+                        </div>
                     </div>
                 </div>
             </xpath>
