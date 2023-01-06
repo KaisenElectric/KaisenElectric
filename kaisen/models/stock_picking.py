@@ -6,7 +6,26 @@ from odoo.addons.payment import utils as payment_utils
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    is_send_data_to_logismart = fields.Boolean(string="Send data to Logismart", default=True)
+    @api.model
+    def get_logismart_delivery_posts(self):
+        logismart_delivery_method = self.env.context.get("logismart_delivery_method")
+        country_code = self.env.context.get("country_code")
+        city = self.env.context.get("city")
+        if not logismart_delivery_method or not country_code or not city:
+            return []
+        payload = {
+            "delivery_id": logismart_delivery_method,
+            "country": country_code,
+            "fields": "post_id,address,city",
+        }
+        data = self.env["res.config.settings"].send_request_to_logismart("get", "/couriers/posts", payload)
+        return [(x.get("post_id"), x.get("address")) for x in data.get("posts") if x.get("city") == city]
+
+    external_integration_id = fields.Many2one(comodel_name="external.integration", string="External Integration")
+    logismart_delivery_method = fields.Integer(related="carrier_id.logismart_delivery_method", string="Logismart Delivery Method")
+    country_code = fields.Char(related="sale_id.partner_shipping_id.country_id.code", string="Country Code")
+    city = fields.Char(related="sale_id.partner_shipping_id.city", string="City")
+    logismart_delivery_post = fields.Char(string="Logismart Delivery Post")
 
     @api.constrains("state")
     def _check_state(self):
@@ -16,26 +35,25 @@ class StockPicking(models.Model):
                 for move_id in record_id.move_ids_without_package:
                     if not move_id.product_packaging_qty.is_integer():
                         raise UserError("Packaging Quality must be whole number")
-                if record_id.picking_type_id.code == "incoming" and record_id.is_send_data_to_logismart:
-                    record_id.create_arrival_in_logismart()
-                elif record_id.picking_type_id.code == "outgoing" and record_id.is_send_data_to_logismart:
-                    record_id.create_order_in_logismart()
+                if record_id.external_integration_id == self.env.ref("kaisen.external_integration_logismart"):
+                    if record_id.picking_type_id.code == "incoming":
+                        record_id.create_arrival_in_logismart()
+                    elif record_id.picking_type_id.code == "outgoing":
+                        record_id.create_order_in_logismart()
 
     def get_products_for_logismart(self):
         """Returns products for logismart"""
         self.ensure_one()
         products = []
         for move_id in self.move_ids_without_package:
-            product_code = move_id.get_logismart_product_code()
-            if product_code and move_id.product_packaging_qty > 0:
-                if not move_id.product_packaging_qty.is_integer():
-                    raise UserError("Packaging Quality must be whole number")
-                products.append(
-                    {
-                        "product_code": product_code,
-                        "quantity": int(move_id.product_packaging_qty),
-                    }
-                )
+            if not move_id.product_packaging_qty.is_integer() or move_id.product_packaging_qty <= 0:
+                raise UserError("Packaging Quality must be whole number")
+            products.append(
+                {
+                    "product_code": move_id.get_logismart_product_code(),
+                    "quantity": int(move_id.product_packaging_qty),
+                }
+            )
         return products
 
     def create_arrival_in_logismart(self):
@@ -71,11 +89,11 @@ class StockPicking(models.Model):
                 "last_name": last_name,
                 "email": self.partner_id.email,
                 "phone": self.partner_id.phone,
-                "address": self.partner_id.street_name,
-                "house": self.partner_id.street_number,
-                "postcode": self.partner_id.zip,
-                "city": self.partner_id.city,
-                "country_code": self.partner_id.country_id.code,
+                "address": self.sale_id.partner_shipping_id.street_name,
+                "house": self.sale_id.partner_shipping_id.street_number,
+                "postcode": self.sale_id.partner_shipping_id.zip,
+                "city": self.sale_id.partner_shipping_id.city,
+                "country_code": self.sale_id.partner_shipping_id.country_id.code,
                 "total": self.sale_id.amount_total,
             }
             self.env["res.config.settings"].send_request_to_logismart("post", "/orders/add", payload)
