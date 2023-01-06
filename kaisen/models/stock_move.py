@@ -1,5 +1,6 @@
 from odoo import models, fields
 from odoo.tools.float_utils import float_round
+from odoo.exceptions import UserError
 
 
 class StockMove(models.Model):
@@ -38,6 +39,11 @@ class StockMove(models.Model):
     def get_logismart_product_code(self):
         """Returns logismart_product_code by product and packaging"""
         self.ensure_one()
-        return self.product_id.packaging_ids.filtered(lambda x: x == self.product_packaging_id)[
+        if not self.product_packaging_id:
+            raise UserError(f"Packaging field is not filled in for {self.product_id.name}")
+        logismart_product_code = self.product_id.packaging_ids.filtered(lambda x: x == self.product_packaging_id)[
             :1
         ].logismart_product_code
+        if not logismart_product_code:
+            raise UserError(f"Logismart product code field is not filled in {self.product_id.name}")
+        return logismart_product_code

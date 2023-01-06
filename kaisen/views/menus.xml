@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_main_external_integration" name="External Integration" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager" sequence="200"/>
+
+    <menuitem action="external_integration_action" id="menu_external_integration" parent="menu_main_external_integration" sequence="1"/>
+
+</odoo>

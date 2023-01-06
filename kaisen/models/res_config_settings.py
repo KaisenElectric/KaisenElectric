@@ -57,9 +57,6 @@ class ResConfigSettings(models.TransientModel):
             response = requests.post(url, headers=headers, json=payload, auth=(username, password))
         data = response.json()
         if not response.ok:
-            message = "Logismart Error\n" + data.get("error", "")
-            for key, value in data.get("errors", {}).items():
-                error = f"{key}: {value}"
-                message = f"{message}\n{error}"
+            message = "Logismart Errors:\n" + "\n".join(data.get("errors", {}).values())
             raise UserError(message)
         return data

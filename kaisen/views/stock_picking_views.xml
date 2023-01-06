@@ -10,7 +10,25 @@
                 <field name="product_packaging_qty"/>
             </xpath>
             <xpath expr="//field[@name='backorder_id']" position="after">
-                <field name="is_send_data_to_logismart"/>
+                <field name="external_integration_id" widget="selection" no_create="1" no_open="1" options="{'no_quick_create': True, 'no_create_edit' : True, 'no_open': True, 'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_picking_withcarrier_out_form" model="ir.ui.view">
+        <field name="name">stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='carrier_id']" position="after">
+                <field name="logismart_delivery_method" invisible="1"/>
+                <field name="country_code" invisible="1"/>
+                <field name="city" attrs="{'invisible': [('external_integration_id', '!=', %(kaisen.external_integration_logismart)d)]}"/>
+                <field name="logismart_delivery_post"
+                       widget="dynamic_dropdown"
+                       values="get_logismart_delivery_posts"
+                       context="{'logismart_delivery_method': logismart_delivery_method, 'country_code': country_code, 'city': city}"
+                       attrs="{'invisible': [('external_integration_id', '!=', %(kaisen.external_integration_logismart)d)]}"/>
             </xpath>
         </field>
     </record>

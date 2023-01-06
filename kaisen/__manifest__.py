@@ -16,10 +16,13 @@
         "account_sequence_option",
         "sale",
         "delivery",
+        "web_widget_dropdown_dynamic",
     ],
     "data": [
         # SECURITY
+        "security/ir.model.access.csv",
         # DATA
+        "data/external_integration_data.xml",
         # VIEWS
         "views/stock_picking_views.xml",
         "views/res_config_settings_views.xml",
@@ -30,6 +33,8 @@
         "views/account_move_views.xml",
         "views/delivery_carrier_views.xml",
         "views/stock_move_line_views.xml",
+        "views/external_integration.xml",
+        "views/menus.xml",
         # WIZARDS
         # REPORTS
     ],
