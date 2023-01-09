@@ -6,4 +6,8 @@ class AccountMove(models.Model):
 
     @api.onchange("name", "highest_name")
     def _onchange_name_warning(self):
+        """
+        OVERRIDE
+        Does not return a warning.
+        """
         super()._onchange_name_warning()

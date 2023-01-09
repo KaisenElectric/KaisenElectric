@@ -10,6 +10,9 @@
                 <attribute name="readonly">0</attribute>
                 <attribute name="attrs">{'readonly': [('state', '!=', 'draft')]}</attribute>
             </xpath>
+            <xpath expr="//field[@name='price_unit']" position="after">
+                <field name="internal_cost" optional="show"/>
+            </xpath>
         </field>
     </record>
 

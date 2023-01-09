@@ -47,3 +47,13 @@ class StockMove(models.Model):
         if not logismart_product_code:
             raise UserError(f"Logismart product code field is not filled in {self.product_id.name}")
         return logismart_product_code
+
+    def _get_price_unit(self):
+        """
+        OVERRIDE
+        Returns the unit price for the move.
+        """
+        self.ensure_one()
+        if self.purchase_line_id.internal_cost:
+            return self.purchase_line_id.internal_cost
+        return super()._get_price_unit()
