@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.addons.payment import utils as payment_utils
+from odoo.tests import Form
 
 
 class StockPicking(models.Model):
@@ -8,6 +9,7 @@ class StockPicking(models.Model):
 
     @api.model
     def get_logismart_delivery_posts(self):
+        """Return Logismart delivery posts by context and LOgismart API"""
         logismart_delivery_method = self.env.context.get("logismart_delivery_method")
         country_code = self.env.context.get("country_code")
         city = self.env.context.get("city")
@@ -32,14 +34,25 @@ class StockPicking(models.Model):
         """Checks field product_packaging_qty for integer when moving stock picking to done stage"""
         for record_id in self:
             if record_id.state == "done":
+                picking_type_code = record_id.picking_type_id.code
                 for move_id in record_id.move_ids_without_package:
                     if not move_id.product_packaging_qty.is_integer():
                         raise UserError("Packaging Quality must be whole number")
                 if record_id.external_integration_id == self.env.ref("kaisen.external_integration_logismart"):
-                    if record_id.picking_type_id.code == "incoming":
+                    if picking_type_code == "incoming":
                         record_id.create_arrival_in_logismart()
-                    elif record_id.picking_type_id.code == "outgoing":
+                    elif picking_type_code == "outgoing":
                         record_id.create_order_in_logismart()
+                sale_id = self.env["sale.order"].search([("auto_purchase_order_id", "=", record_id.purchase_id.id)], limit=1)
+                if picking_type_code == "incoming" and sale_id:
+                    if sale_id.state not in ('done', 'cancel'):
+                        sale_id.action_confirm()
+                    for picking_id in sale_id.picking_ids:
+                        for move_id in picking_id.move_lines:
+                            move_id.quantity_done = move_id.product_uom_qty
+                        wizard_action = picking_id.button_validate()
+                        if wizard_action is not True:
+                            Form(self.env[wizard_action['res_model']].with_context(wizard_action['context'])).save().process()
 
     def get_products_for_logismart(self):
         """Returns products for logismart"""

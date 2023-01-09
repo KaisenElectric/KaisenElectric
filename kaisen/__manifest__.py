@@ -17,6 +17,7 @@
         "sale",
         "delivery",
         "web_widget_dropdown_dynamic",
+        "sale_margin",
     ],
     "data": [
         # SECURITY
