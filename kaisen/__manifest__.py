@@ -18,6 +18,7 @@
         "delivery",
         "web_widget_dropdown_dynamic",
         "sale_margin",
+        "stock_landed_costs",
     ],
     "data": [
         # SECURITY
