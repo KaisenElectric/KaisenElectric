@@ -25,6 +25,17 @@ class ProductPackaging(models.Model):
         store=True,
     )
 
+    @api.model
+    def create(self, values):
+        record_id = super().create(values)
+        if not record_id.stock_quant_package_id:
+            record_id.stock_quant_package_id = self.env["stock.quant.package"].create(
+                {
+                    "name": record_id.name,
+                }
+            )
+        return record_id
+
     @api.depends("stock_quant_package_ids")
     def _compute_stock_quant_package_id(self):
         """Computes stock_quant_package_id by stock_quant_package_ids"""
@@ -42,12 +53,6 @@ class ProductPackaging(models.Model):
         for record_id in self:
             if record_id.logismart_product_code:
                 record_id.check_product_code_in_logismart()
-                if not record_id.stock_quant_package_id:
-                    record_id.stock_quant_package_id = self.env["stock.quant.package"].create(
-                        {
-                            "name": record_id.name,
-                        }
-                    )
 
     @api.constrains("name")
     def _check_name(self):

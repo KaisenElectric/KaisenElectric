@@ -28,17 +28,19 @@
         # VIEWS
         "views/stock_picking_views.xml",
         "views/res_config_settings_views.xml",
-        "views/product_packaging.xml",
-        "views/stock_quant.xml",
+        "views/product_packaging_views.xml",
+        "views/stock_quant_views.xml",
         "views/purchase_order_views.xml",
         "views/sale_order_views.xml",
         "views/account_move_views.xml",
         "views/delivery_carrier_views.xml",
         "views/stock_move_line_views.xml",
-        "views/external_integration.xml",
-        "views/menus.xml",
+        "views/external_integration_views.xml",
+        "views/stock_quant_package_views.xml",
         # WIZARDS
+        "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS
+        "views/menus.xml",
     ],
     "qweb": [],
     "application": True,
