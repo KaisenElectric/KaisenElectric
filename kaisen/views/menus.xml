@@ -3,6 +3,8 @@
 
     <menuitem id="menu_main_external_integration" name="External Integration" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager" sequence="200"/>
 
+    <menuitem id="menu_import_of_cost_of_products" name="Import of cost of products" parent="stock.menu_stock_config_settings" groups="stock.group_stock_manager" sequence="300" action="import_of_cost_of_products_wizard_action"/>
+
     <menuitem action="external_integration_action" id="menu_external_integration" parent="menu_main_external_integration" sequence="1"/>
 
 </odoo>
