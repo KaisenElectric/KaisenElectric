@@ -11,7 +11,7 @@ class PurchaseOrderLine(models.Model):
     def _compute_internal_cost(self):
         """Computes internal_cost by partner_id and purchase_price in linked sale order line."""
         for record_id in self:
-            if record_id.order_id.partner_id == self.env.company.parent_id.partner_id:
+            if record_id.order_id.partner_id in self.env.company.parent_ids.mapped("partner_id"):
                 record_id.internal_cost = record_id.sudo().sale_order_line_id.purchase_price
             else:
                 record_id.internal_cost = 0
