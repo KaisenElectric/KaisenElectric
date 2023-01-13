@@ -93,6 +93,8 @@ class StockPicking(models.Model):
             delivery = {
                 "method": self.carrier_id.logismart_delivery_method,
             }
+            if self.logismart_delivery_post:
+                delivery["post"] = int(self.logismart_delivery_post)
             payload = {
                 "order_code": self.name,
                 "products": products,
