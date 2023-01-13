@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="replace">
+                <div attrs="{'invisible': [('move_type', 'not in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund'))]}">
+                    <!-- Invoice draft header -->
+                    <span class="o_form_label">
+                        <field name="move_type" attrs="{'invisible': [('move_type', '=', 'entry')]}" readonly="1"
+                               nolabel="1"/>
+                    </span>
+                    <h1 attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        class="oe_read_only">
+                        <span>Draft</span>
+                    </h1>
+
+                    <!-- Number -->
+                    <span class="text-warning" attrs="{'invisible': [('show_name_warning', '=', False)]}">The current
+                        highest number is<field name="highest_name"/>. You might want to put a higher number here.
+                    </span>
+                    <h1 class="mt0" attrs="{'invisible':[('name', '=', '/'), ('state', '=', 'draft')]}">
+                        <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                               placeholder="JRNL/2016/00001"/>
+                    </h1>
+                    <h1 class="mt0 oe_edit_only"
+                        attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('name', '!=', '/')]}">
+                        <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}"
+                               placeholder="JRNL/2016/00001"/>
+                    </h1>
+                </div>
+                <div attrs="{'invisible': [('move_type', 'in', ('in_invoice', 'in_refund', 'out_invoice', 'out_refund'))]}">
+                    <!-- Invoice draft header -->
+                    <span class="o_form_label"><field name="move_type" attrs="{'invisible': [('move_type', '=', 'entry')]}" readonly="1" nolabel="1"/></span>
+                    <h1 attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('name', '!=', '/')]}">
+                        <span>Draft</span>
+                    </h1>
+
+                    <!-- Number -->
+                    <span class="text-warning" attrs="{'invisible': [('show_name_warning', '=', False)]}">The current highest number is <field name="highest_name"/>. You might want to put a higher number here.</span>
+                    <h1 class="mt0" attrs="{'invisible':[('name', '=', '/'), ('posted_before', '=', False)]}">
+                        <field name="name" attrs="{'readonly': [('state', '!=', 'draft')]}" placeholder="JRNL/2016/00001"/>
+                    </h1>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

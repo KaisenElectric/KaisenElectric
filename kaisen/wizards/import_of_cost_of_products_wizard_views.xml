@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="import_of_cost_of_products_wizard_form" model="ir.ui.view">
+        <field name="name">import.of.cost.of.products.wizard.form</field>
+        <field name="model">import.of.cost.of.products.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="file" widget="binary"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="import_of_cost_of_products" string="Import of cost of products" class="btn-primary" type="object"/>
+                        <button string="Cancel" class="btn-primary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="import_of_cost_of_products_wizard_action" model="ir.actions.act_window">
+        <field name="name">Import of cost of products</field>
+        <field name="res_model">import.of.cost.of.products.wizard</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
