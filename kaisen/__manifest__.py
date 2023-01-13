@@ -18,6 +18,7 @@
         "delivery",
         "web_widget_dropdown_dynamic",
         "sale_margin",
+        "account_inter_company_rules",
         "stock_landed_costs",
     ],
     "data": [
@@ -37,6 +38,7 @@
         "views/stock_move_line_views.xml",
         "views/external_integration_views.xml",
         "views/stock_quant_package_views.xml",
+        "views/res_company_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS

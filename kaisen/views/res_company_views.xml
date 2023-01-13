@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_company_form" model="ir.ui.view">
+        <field name="name">res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="account_inter_company_rules.view_company_inter_change_inherit_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='inter_company_transactions']" position="after">
+                <page string="Inter-Company Settings" name="inter_company_settings">
+                    <group>
+                        <group>
+                            <field name="parent_ids" widget="many2many_tags" string="Parent companies"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

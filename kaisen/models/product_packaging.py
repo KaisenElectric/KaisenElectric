@@ -47,12 +47,12 @@ class ProductPackaging(models.Model):
         for record_id in self:
             record_id.stock_quant_package_id.product_packaging_id = self
 
-    @api.constrains("logismart_product_code")
-    def _check_logismart_product_code(self):
-        """Checks if product code exists in logismart system"""
-        for record_id in self:
-            if record_id.logismart_product_code:
-                record_id.check_product_code_in_logismart()
+    # @api.constrains("logismart_product_code")
+    # def _check_logismart_product_code(self):
+    #     """Checks if product code exists in logismart system"""
+    #     for record_id in self:
+    #         if record_id.logismart_product_code:
+    #             record_id.check_product_code_in_logismart()
 
     @api.constrains("name")
     def _check_name(self):
@@ -61,11 +61,11 @@ class ProductPackaging(models.Model):
             if record_id.stock_quant_package_id:
                 record_id.with_context(force_edit_stock_quant_package=True).stock_quant_package_id.name = record_id.name
 
-    @api.onchange("logismart_product_code")
-    def _onchange_logismart_product_code(self):
-        """Checks if product code exists in logismart system"""
-        for record_id in self:
-            record_id.check_product_code_in_logismart()
+    # @api.onchange("logismart_product_code")
+    # def _onchange_logismart_product_code(self):
+    #     """Checks if product code exists in logismart system"""
+    #     for record_id in self:
+    #         record_id.check_product_code_in_logismart()
 
     def check_product_code_in_logismart(self):
         """Checks if product code exists in logismart system"""
