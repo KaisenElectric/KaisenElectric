@@ -12,6 +12,7 @@ class ImportOfCostOfProductsWizard(models.TransientModel):
     file = fields.Binary(string="File", required=True, attachment=False)
 
     def import_of_cost_of_products(self):
+        self = self.sudo()
         book = xlrd.open_workbook(file_contents=b64decode(self.file) or b"")
         sheet = book.sheet_by_index(0)
         for index, row in enumerate(sheet.get_rows()):

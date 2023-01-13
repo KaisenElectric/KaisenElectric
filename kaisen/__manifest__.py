@@ -19,7 +19,7 @@
         "web_widget_dropdown_dynamic",
         "sale_margin",
         "account_inter_company_rules",
-        "stock_landed_costs",
+        # "stock_landed_costs",
     ],
     "data": [
         # SECURITY
