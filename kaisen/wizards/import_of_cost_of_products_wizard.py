@@ -42,6 +42,11 @@ class ImportOfCostOfProductsWizard(models.TransientModel):
             if not picking_type_id:
                 raise UserError(f"Delivery with {row[4].value} warehouse was not found in line {index + 1}")
             po_form.picking_type_id = picking_type_id
+            if not row[1].value:
+                raise UserError(f"Date was not specified in line {index + 1}")
+            date = xlrd.xldate_as_datetime(row[1].value, 0)
+            po_form.date_order = date
+            po_form.date_planned = date
             with po_form.order_line.new() as line:
                 product_id = self.env["product.product"].search([("name", "=", row[0].value.split("/")[0])], limit=1)
                 if not product_id:
@@ -60,6 +65,7 @@ class ImportOfCostOfProductsWizard(models.TransientModel):
                     raise UserError(f"Packaging {row[3].value} was not found in line {index + 1}")
                 line.product_packaging_id = packaging_id
             po_id = po_form.save()
+            po_id = po_id.with_context(forced_create_date=date.strftime("%Y-%m-%d %H:%M:%S"))
             po_id.button_confirm()
             for picking_id in po_id.picking_ids:
                 for move_id in picking_id.move_lines:
