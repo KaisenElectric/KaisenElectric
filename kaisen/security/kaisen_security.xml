@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="own_customers_only_transfers" model="ir.rule">
+        <field name="name">Own Customers Only Transfers</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="domain_force">[('picking_type_id.code','=','outgoing'),'|','|',('partner_id.user_id','=',user.id),('partner_id.user_id','=',False),('partner_id.team_id.user_id','=',user.id)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <record id="all_transfers_group" model="ir.rule">
+        <field name="name">All Transfers</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('stock.group_stock_manager'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'base'), ('name', 'in', ['res_partner_rule_private_group', 'res_partner_rule_private_employee'])]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <record id="base.res_partner_rule_private_employee" model="ir.rule">
+        <field name="domain_force">['|', ('type', '!=', 'private'), ('type', '=', False),'|','|',('user_id','=',user.id),('user_id','=',False),('team_id.user_id','=',user.id)]</field>
+    </record>
+
+    <record id="base.res_partner_rule_private_group" model="ir.rule">
+        <field name="domain_force">[('type', '=', 'private'),'|','|',('user_id','=',user.id),('user_id','=',False),('team_id.user_id','=',user.id)]</field>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'base'), ('name', 'in', ['res_partner_rule_private_group', 'res_partner_rule_private_employee'])]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
+    <record id="group_all_customers" model="res.groups">
+        <field name="name">All Customers</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+    <record id="res_partner_rule_all_group" model="ir.rule">
+        <field name="name">All Contacts</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(6, 0, [ref('kaisen.group_all_customers')])]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'account'), ('name', 'in', ['account_move_see_all', 'account_move_rule_group_invoice'])]"/>
+        </function>
+        <value eval="{'noupdate': False}"/>
+    </function>
+
+    <record id="account.account_move_see_all" model="ir.rule">
+        <field name="groups" eval="[(6, 0, [ref('account.group_account_user')])]"/>
+    </record>
+
+    <record id="account.account_move_rule_group_invoice" model="ir.rule">
+        <field name="groups" eval="[(6, 0, [ref('account.group_account_user')])]"/>
+    </record>
+
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('module', '=', 'account'), ('name', 'in', ['account_move_see_all', 'account_move_rule_group_invoice'])]"/>
+        </function>
+        <value eval="{'noupdate': True}"/>
+    </function>
+
+    <record id="account_move_rule_group_own_invoice" model="ir.rule">
+        <field name="name">Own Invoices Only</field>
+        <field name="model_id" ref="model_account_move"/>
+        <field name="domain_force">['|','|',('user_id','=',user.id),('user_id','=',False),('team_id.user_id','=',user.id)]</field>
+        <field name="groups" eval="[(4, ref('account.group_account_invoice'))]"/>
+    </record>
+
+    <record id="stock.menu_warehouse_report" model="ir.ui.menu">
+        <field name="groups_id"
+               eval="[(6, 0, [ref('stock.group_stock_manager'), ref('stock.group_stock_user')])]"/>
+    </record>
+
+    <record id="stock.menu_forecast_inventory" model="ir.ui.menu">
+        <field name="groups_id"
+               eval="[(6, 0, [ref('stock.group_stock_manager'), ref('stock.group_stock_user')])]"/>
+    </record>
+
+    <record id="stock.menu_valuation" model="ir.ui.menu">
+        <field name="groups_id"
+               eval="[(6, 0, [ref('stock.group_stock_manager'), ref('stock.group_stock_user')])]"/>
+    </record>
+
+</odoo>
