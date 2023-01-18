@@ -8,6 +8,7 @@
     "version": "15.0.1",
     "license": "Other proprietary",
     "depends": [
+        "base",
         "purchase",
         "stock",
         "purchase_stock",
@@ -24,6 +25,7 @@
     ],
     "data": [
         # SECURITY
+        "security/kaisen_security.xml",
         "security/ir.model.access.csv",
         # DATA
         "data/external_integration_data.xml",
@@ -40,6 +42,7 @@
         "views/external_integration_views.xml",
         "views/stock_quant_package_views.xml",
         "views/res_company_views.xml",
+        "views/res_partner_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS
