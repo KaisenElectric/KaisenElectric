@@ -11,4 +11,6 @@ class SaleOrder(models.Model):
         """
         result = super()._prepare_purchase_order_line_data(so_line, date_order, company)
         result["sale_order_line_id"] = so_line.id
+        result["product_packaging_id"] = so_line.product_packaging_id.id
+        result["price_unit"] = so_line.price_unit
         return result
