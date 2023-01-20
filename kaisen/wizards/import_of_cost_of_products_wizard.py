@@ -65,11 +65,12 @@ class ImportOfCostOfProductsWizard(models.TransientModel):
                     raise UserError(f"Packaging {row[3].value} was not found in line {index + 1}")
                 line.product_packaging_id = packaging_id
             po_id = po_form.save()
-            po_id = po_id.with_context(forced_create_date=date.strftime("%Y-%m-%d %H:%M:%S"))
+            po_id = po_id.with_context(force_period_date=date)
             po_id.button_confirm()
             for picking_id in po_id.picking_ids:
                 for move_id in picking_id.move_lines:
                     move_id.quantity_done = move_id.product_uom_qty
+                    move_id.date = date
                 wizard_action = picking_id.button_validate()
                 if wizard_action is not True:
                     Form(self.env[wizard_action["res_model"]].with_context(wizard_action["context"])).save().process()
