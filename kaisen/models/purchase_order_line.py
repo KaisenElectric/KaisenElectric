@@ -7,6 +7,61 @@ class PurchaseOrderLine(models.Model):
     internal_cost = fields.Float(string="Internal Cost", currency_field="currency_id", compute="_compute_internal_cost")
     sale_order_line_id = fields.Many2one(comodel_name="sale.order.line", string="Sale Order Line")
 
+    @api.model
+    def _prepare_purchase_order_line_from_procurement(self, product_id, product_qty, product_uom, company_id, values,
+                                                      po):
+        """
+        OVERRIDE
+        Added intecialization of fields product_packaging_id and price_unit when po line created
+        """
+        res = super()._prepare_purchase_order_line_from_procurement(product_id, product_qty, product_uom, company_id,
+                                                                    values, po)
+        if values.get("product_packaging_id"):
+            res["product_packaging_id"] = values.get("product_packaging_id").id
+        if values.get("move_dest_ids"):
+            res["price_unit"] = values.get("move_dest_ids").sale_line_id.price_unit
+        return res
+
+    def _prepare_stock_moves(self, picking):
+        """
+        OVERRIDE
+        Added intecialization of fields product_packaging_id and price_unit when po line created
+        """
+        results = super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
+        for result in results:
+            result["product_packaging_id"] = self.product_packaging_id.id
+            result["price_unit"] = self.move_dest_ids.sale_line_id.price_unit
+        return results
+
+    def _find_candidate(self, product_id, product_qty, product_uom, location_id, name, origin, company_id, values):
+        """
+        OVERRIDE
+        Added fields product_packaging_id and price_unit when select candidates for the merger
+        """
+        lines = self.filtered(
+            lambda po_line: po_line.product_packaging_id.id == values['product_packaging_id'].id) if values.get(
+            'product_packaging_id') else self
+        lines = lines.filtered(
+            lambda po_line: po_line.price_unit == values.get("move_dest_ids").sale_line_id.price_unit) if values.get(
+            "move_dest_ids") else lines
+        return super(PurchaseOrderLine, lines)._find_candidate(product_id, product_qty, product_uom, location_id, name,
+                                                               origin, company_id, values)
+
+    @api.model
+    def _prepare_purchase_order_line_from_procurement(self, product_id, product_qty, product_uom, company_id, values,
+                                                      po):
+        """
+        OVERRIDE
+        Added fields product_packaging_id and price_unit when select candidates for the merger
+        """
+        res = super()._prepare_purchase_order_line_from_procurement(product_id, product_qty, product_uom, company_id,
+                                                                    values, po)
+        res['product_packaging_id'] = values.get('product_packaging_id').id if values.get(
+            'product_packaging_id') else False
+        res['price_unit'] = values.get("move_dest_ids").sale_line_id.price_unit if values.get(
+            "move_dest_ids") else False
+        return res
+
     @api.depends("order_id", "order_id.partner_id", "sale_order_line_id", "sale_order_line_id.purchase_price")
     def _compute_internal_cost(self):
         """Computes internal_cost by partner_id and purchase_price in linked sale order line."""
