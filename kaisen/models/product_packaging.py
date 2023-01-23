@@ -5,13 +5,7 @@ from odoo.exceptions import ValidationError
 class ProductPackaging(models.Model):
     _inherit = "product.packaging"
 
-    _sql_constraints = [
-        (
-            "logismart_product_code_uniq",
-            "unique(logismart_product_code)",
-            "Only one Logismart Product Code can be linked!",
-        ),
-    ]
+    _sql_constraints = [("logismart_product_code_uniq", "check(1=1)", "No error")]
 
     logismart_product_code = fields.Char(string="Logismart product code")
     stock_quant_package_ids = fields.One2many(
@@ -47,12 +41,16 @@ class ProductPackaging(models.Model):
         for record_id in self:
             record_id.stock_quant_package_id.product_packaging_id = self
 
-    # @api.constrains("logismart_product_code")
-    # def _check_logismart_product_code(self):
-    #     """Checks if product code exists in logismart system"""
-    #     for record_id in self:
-    #         if record_id.logismart_product_code:
-    #             record_id.check_product_code_in_logismart()
+    @api.constrains("logismart_product_code")
+    def _check_logismart_product_code(self):
+        """Checks if product code exists in logismart system"""
+        for record_id in self:
+            if record_id.logismart_product_code:
+                if self.search([("logismart_product_code", "=", record_id.logismart_product_code),
+                                ("product_id", "!=", False), ("id", "!=", record_id.id)], limit=1):
+                    raise ValidationError("Logismart Product Code must be unique")
+                # temporarily disabled check in logismart
+                # record_id.check_product_code_in_logismart()
 
     @api.constrains("name")
     def _check_name(self):
@@ -61,11 +59,13 @@ class ProductPackaging(models.Model):
             if record_id.stock_quant_package_id:
                 record_id.with_context(force_edit_stock_quant_package=True).stock_quant_package_id.name = record_id.name
 
+    # temporarily disabled check in logismart
     # @api.onchange("logismart_product_code")
     # def _onchange_logismart_product_code(self):
-    #     """Checks if product code exists in logismart system"""
-    #     for record_id in self:
-    #         record_id.check_product_code_in_logismart()
+        # """Checks if product code exists in logismart system"""
+        # for record_id in self:
+            # if record_id.logismart_product_code:
+                # record_id.check_product_code_in_logismart()
 
     def check_product_code_in_logismart(self):
         """Checks if product code exists in logismart system"""
