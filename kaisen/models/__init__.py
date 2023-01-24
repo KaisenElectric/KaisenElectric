@@ -14,3 +14,4 @@ from . import sale_order_line
 from . import res_company
 from . import stock_valuation_layer
 from . import stock_rule
+from . import stock_move_line
