@@ -9,6 +9,9 @@
             <xpath expr="//field[@name='package_id']" position="attributes">
                 <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
             </xpath>
+            <xpath expr="//field[@name='result_package_id']" position="after">
+                <field name="product_packaging_id"/>
+            </xpath>
         </field>
     </record>
 

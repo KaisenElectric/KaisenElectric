@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 from odoo.exceptions import UserError
 
 
@@ -10,6 +10,23 @@ class StockQuantPackage(models.Model):
     ]
 
     product_packaging_id = fields.Many2one(comodel_name="product.packaging", string="Product Packaging")
+    location_id = fields.Many2one(sting="Location", compute=False, readonly=False
+    )
+    company_id = fields.Many2one(sting="Company", compute=False, readonly=False
+    )
+
+    @api.depends('quant_ids.package_id', 'quant_ids.location_id', 'quant_ids.company_id', 'quant_ids.owner_id',
+                 'quant_ids.quantity', 'quant_ids.reserved_quantity')
+    def _compute_package_info(self):
+        for package in self:
+            values = {'location_id': False, 'owner_id': False}
+            if package.quant_ids:
+                values['location_id'] = package.quant_ids[0].location_id
+                if all(q.owner_id == package.quant_ids[0].owner_id for q in package.quant_ids):
+                    values['owner_id'] = package.quant_ids[0].owner_id
+                if all(q.company_id == package.quant_ids[0].company_id for q in package.quant_ids):
+                    values['company_id'] = package.quant_ids[0].company_id
+            package.owner_id = values['owner_id']
 
     def write(self, values):
         """Blocks editing of record name if it is needed for integration with Logismart"""
