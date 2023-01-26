@@ -19,7 +19,14 @@ class PurchaseOrderLine(models.Model):
         if values.get("product_packaging_id"):
             res["product_packaging_id"] = values.get("product_packaging_id").id
         if values.get("move_dest_ids"):
-            res["price_unit"] = values.get("move_dest_ids").sale_line_id.price_unit
+            sale_line_id = values.get("move_dest_ids").sale_line_id
+            price_unit = sale_line_id.price_unit
+            if sale_line_id.order_id.currency_id != po.currency_id:
+                price_unit = sale_line_id.order_id.currency_id._convert(from_amount=price_unit,
+                                                                        to_currency=po.currency_id,
+                                                                        company=po.company_id, date=fields.Date.today(),
+                                                                        round=False)
+            res["price_unit"] = price_unit
         return res
 
     def _prepare_stock_moves(self, picking):
@@ -41,9 +48,14 @@ class PurchaseOrderLine(models.Model):
         lines = self.filtered(
             lambda po_line: po_line.product_packaging_id.id == values['product_packaging_id'].id) if values.get(
             'product_packaging_id') else self
-        lines = lines.filtered(
-            lambda po_line: po_line.price_unit == values.get("move_dest_ids").sale_line_id.price_unit) if values.get(
-            "move_dest_ids") else lines
+        if values.get("move_dest_ids"):
+            sale_line_id = values.get("move_dest_ids").move_dest_ids.sale_line_id
+            lines = lines.filtered(
+                lambda po_line_id: po_line_id.price_unit == sale_line_id.order_id.currency_id._convert(
+                    from_amount=sale_line_id.price_unit,
+                    to_currency=po_line_id.order_id.currency_id,
+                    company=po_line_id.order_id.company_id, date=fields.Date.today(),
+                    round=False))
         return super(PurchaseOrderLine, lines)._find_candidate(product_id, product_qty, product_uom, location_id, name,
                                                                origin, company_id, values)
 
@@ -58,8 +70,15 @@ class PurchaseOrderLine(models.Model):
                                                                     values, po)
         res['product_packaging_id'] = values.get('product_packaging_id').id if values.get(
             'product_packaging_id') else False
-        res['price_unit'] = values.get("move_dest_ids").sale_line_id.price_unit if values.get(
-            "move_dest_ids") else False
+        if values.get("move_dest_ids"):
+            sale_line_id = values.get("move_dest_ids").sale_line_id
+            price_unit = sale_line_id.price_unit
+            if sale_line_id.order_id.currency_id != po.currency_id:
+                price_unit = sale_line_id.order_id.currency_id._convert(from_amount=price_unit,
+                                                                        to_currency=po.currency_id,
+                                                                        company=po.company_id, date=fields.Date.today(),
+                                                                        round=False)
+            res["price_unit"] = price_unit
         return res
 
     @api.depends("order_id", "order_id.partner_id", "sale_order_line_id", "sale_order_line_id.purchase_price")
