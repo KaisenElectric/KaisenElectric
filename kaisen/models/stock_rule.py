@@ -15,7 +15,6 @@ class StockRule(models.Model):
         if values.get("product_packaging_id"):
             move_values["package_level_id"] = self.env["stock.package_level"].create({
                 "package_id": values.get("product_packaging_id").stock_quant_package_id.id,
-                "company_id": company_id.id,
             }).id
         return move_values
 
