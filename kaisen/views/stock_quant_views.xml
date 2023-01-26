@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="stock.view_stock_quant_form_editable"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), ('product_packaging_id.product_id', '=', product_id)]</attribute>
             </xpath>
         </field>
     </record>
@@ -18,7 +18,7 @@
         <field name="inherit_id" ref="stock.view_stock_quant_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), ('product_packaging_id.product_id', '=', product_id)]</attribute>
             </xpath>
         </field>
     </record>
@@ -29,7 +29,7 @@
         <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), ('product_packaging_id.product_id', '=', product_id)]</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='inventory_quantity_auto_apply']" position="attributes">
@@ -50,7 +50,7 @@
         <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
-                <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
+                <attribute name="domain">['|', ('location_id', '=', location_id), ('product_packaging_id.product_id', '=', product_id)]</attribute>
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='quantity']" position="attributes">

@@ -46,5 +46,6 @@ class StockQuant(models.Model):
         packaging_id = self.package_id.product_packaging_id
         quantity = getattr(self, quantity_field_name)
         if quantity != 0 and packaging_id.qty != 0:
-            return float_round(quantity / packaging_id.qty, precision_rounding=packaging_id.product_uom_id.rounding)
+            return float_round(quantity / packaging_id.qty,
+                               precision_rounding=packaging_id.product_uom_id.rounding or 0.01)
         return 0

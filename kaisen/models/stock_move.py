@@ -148,22 +148,22 @@ class StockMove(models.Model):
                 if record_id.picking_id.picking_type_id.code == "incoming" and record_id.quantity_done:
                     product_packaging_qty = float_round(
                         record_id.quantity_done / record_id.product_packaging_id.qty,
-                        precision_rounding=packaging_uom_id.rounding,
+                        precision_rounding=packaging_uom_id.rounding or 0.01,
                     )
                 elif record_id.picking_id.picking_type_id.code == "outgoing" and record_id.forecast_availability:
                     product_packaging_qty = float_round(
                         record_id.forecast_availability / record_id.product_packaging_id.qty,
-                        precision_rounding=packaging_uom_id.rounding,
+                        precision_rounding=packaging_uom_id.rounding or 0.01,
                     )
                 elif record_id.picking_id.picking_type_id.code == "outgoing" and record_id.quantity_done:
                     product_packaging_qty = float_round(
                         record_id.quantity_done / record_id.product_packaging_id.qty,
-                        precision_rounding=packaging_uom_id.rounding,
+                        precision_rounding=packaging_uom_id.rounding or 0.01,
                     )
                 else:
                     product_packaging_qty = float_round(
                         record_id.product_qty / record_id.product_packaging_id.qty,
-                        precision_rounding=packaging_uom_id.rounding,
+                        precision_rounding=packaging_uom_id.rounding or 0.01,
                     )
             record_id.product_packaging_qty = abs(product_packaging_qty)
 
