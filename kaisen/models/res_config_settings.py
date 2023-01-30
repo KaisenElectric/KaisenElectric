@@ -2,10 +2,6 @@ from odoo import models, fields, api, _
 import requests
 from urllib.parse import urlparse
 from odoo.exceptions import UserError
-import logging
-_logger = logging.getLogger(__name__)
-from lxml import etree
-from odoo.addons.web.controllers.main import xml2json_from_elementtree
 
 
 class ResConfigSettings(models.TransientModel):
