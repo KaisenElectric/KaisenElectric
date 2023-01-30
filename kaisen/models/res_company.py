@@ -44,7 +44,7 @@ class ResCompany(models.Model):
             parse_results = None
             parse_function = getattr(companies, '_parse_' + currency_provider + '_data')
             parse_results = parse_function(active_currencies)
-
+            _logger.info(parse_results)
             if parse_results == False:
                 # We check == False, and don't use bool conversion, as an empty
                 # dict can be returned, if none of the available currencies is supported by the provider
@@ -55,24 +55,24 @@ class ResCompany(models.Model):
 
         return rslt
 
-    def _parse_ecb_data(self, available_currencies):
-        ''' This method is used to update the currencies by using ECB service provider.
-            Rates are given against EURO
-        '''
-        request_url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
-        try:
-            parse_url = requests.request('GET', request_url)
-        except:
-            #connection error, the request wasn't successful
-            return False
-
-        xmlstr = etree.fromstring(parse_url.content)
-        data = xml2json_from_elementtree(xmlstr)
-        node = data['children'][2]['children'][0]
-        available_currency_names = available_currencies.mapped('name')
-        rslt = {x['attrs']['currency']:(float(x['attrs']['rate']), fields.Date.today()) for x in node['children'] if x['attrs']['currency'] in available_currency_names}
-
-        if rslt and 'EUR' in available_currency_names:
-            rslt['EUR'] = (1.0, fields.Date.today())
-        _logger.info(rslt)
-        return rslt
+    # def _parse_ecb_data(self, available_currencies):
+    #     ''' This method is used to update the currencies by using ECB service provider.
+    #         Rates are given against EURO
+    #     '''
+    #     request_url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
+    #     try:
+    #         parse_url = requests.request('GET', request_url)
+    #     except:
+    #         #connection error, the request wasn't successful
+    #         return False
+    #
+    #     xmlstr = etree.fromstring(parse_url.content)
+    #     data = xml2json_from_elementtree(xmlstr)
+    #     node = data['children'][2]['children'][0]
+    #     available_currency_names = available_currencies.mapped('name')
+    #     rslt = {x['attrs']['currency']:(float(x['attrs']['rate']), fields.Date.today()) for x in node['children'] if x['attrs']['currency'] in available_currency_names}
+    #
+    #     if rslt and 'EUR' in available_currency_names:
+    #         rslt['EUR'] = (1.0, fields.Date.today())
+    #     _logger.info(rslt)
+    #     return rslt
