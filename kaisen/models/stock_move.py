@@ -185,6 +185,11 @@ class StockMove(models.Model):
         Returns the unit price for the move.
         """
         self.ensure_one()
-        if self.purchase_line_id.internal_cost:
-            return self.purchase_line_id.internal_cost
+        line_id = self.purchase_line_id
+        order_id = line_id.order_id
+        if line_id.internal_cost:
+            return order_id.currency_id._convert(
+                line_id.internal_cost, order_id.company_id.currency_id, order_id.company_id,
+                fields.Date.context_today(self),
+                round=False)
         return super()._get_price_unit()
