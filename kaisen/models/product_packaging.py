@@ -39,7 +39,7 @@ class ProductPackaging(models.Model):
     def _inverse_stock_quant_package_id(self):
         """Inverses stock_quant_package_id, adds self in stock_quant_package_id"""
         for record_id in self:
-            record_id.stock_quant_package_id.product_packaging_id = self
+            record_id.stock_quant_package_id.product_packaging_id = record_id
 
     @api.constrains("logismart_product_code")
     def _check_logismart_product_code(self):
