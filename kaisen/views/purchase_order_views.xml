@@ -13,6 +13,12 @@
             <xpath expr="//field[@name='price_unit']" position="after">
                 <field name="internal_cost" optional="show"/>
             </xpath>
+            <xpath expr="//field[@name='analytic_tag_ids']" position="attributes">
+                <attribute name="optional">show</attribute>
+            </xpath>
+            <xpath expr="//field[@name='account_analytic_id']" position="attributes">
+                <attribute name="optional">show</attribute>
+            </xpath>
         </field>
     </record>
 
