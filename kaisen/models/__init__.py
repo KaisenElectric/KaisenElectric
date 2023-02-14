@@ -16,3 +16,4 @@ from . import stock_valuation_layer
 from . import stock_rule
 from . import stock_move_line
 from . import stock_package_level
+from . import stock_landed_cost
