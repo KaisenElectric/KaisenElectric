@@ -5,7 +5,7 @@ class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
 
     product_packaging_id = fields.Many2one(
-        comodel_name="product.packaging", sting="Packaging", related="move_id.product_packaging_id"
+        comodel_name="product.packaging", string="Packaging", related="move_id.product_packaging_id"
     )
     result_package_id = fields.Many2one(
         string="Destination Package",
