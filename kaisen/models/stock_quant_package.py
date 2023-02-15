@@ -10,9 +10,9 @@ class StockQuantPackage(models.Model):
     ]
 
     product_packaging_id = fields.Many2one(comodel_name="product.packaging", string="Product Packaging")
-    location_id = fields.Many2one(sting="Location", compute=False, readonly=False
+    location_id = fields.Many2one(string="Location", compute=False, readonly=False
     )
-    company_id = fields.Many2one(sting="Company", compute=False, readonly=False
+    company_id = fields.Many2one(string="Company", compute=False, readonly=False
     )
 
     @api.depends('quant_ids.package_id', 'quant_ids.location_id', 'quant_ids.company_id', 'quant_ids.owner_id',
