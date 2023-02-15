@@ -1,8 +1,10 @@
-from odoo import models
+from odoo import models, fields
 
 
 class StockValuationLayer(models.Model):
     _inherit = "stock.valuation.layer"
+
+    warehouse_id = fields.Many2one("stock.warehouse", string="Warehouse")
 
     def create(self, values):
         result = super().create(values)
