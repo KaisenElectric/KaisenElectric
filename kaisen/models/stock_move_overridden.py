@@ -106,17 +106,16 @@ def _action_done(self, cancel_backorder=False):
 
     # For every in move, run the vacuum for the linked product.
     # Kaisen: Changes start
-    products_to_vacuum = {"general": self.env["product.product"], "warehouse": {}}
+    products_to_vacuum = {"general": self.env["product.product"], "warehouse": []}
     for move_id in valued_moves['in']:
         if move_id.product_id.cost_method == "fifowh":
-            products_to_vacuum["warehouse"].setdefault(move_id.location_dest_id.warehouse_id.id, self.env["product.product"])
-            products_to_vacuum["warehouse"][move_id.location_dest_id.warehouse_id.id] |= move_id.product_id
+            products_to_vacuum["warehouse"].append((move_id.location_dest_id.warehouse_id.id, move_id.product_id))
         else:
             products_to_vacuum["general"] |= move_id.product_id
     company = valued_moves['in'].mapped('company_id') and valued_moves['in'].mapped('company_id')[0] or self.env.company
     for product_to_vacuum in products_to_vacuum["general"]:
         product_to_vacuum._run_fifo_vacuum(company)
-    for id_warehouse, product_to_vacuum in products_to_vacuum["warehouse"].items():
+    for id_warehouse, product_to_vacuum in products_to_vacuum["warehouse"]:
         product_to_vacuum._run_fifo_vacuum(company, id_warehouse)
     # Kaisen: Changes end
     return res
