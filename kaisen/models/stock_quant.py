@@ -11,7 +11,7 @@ class StockQuant(models.Model):
     available_package_quantity = fields.Float(
         string="Available Package Quantity", compute="_compute_available_package_quantity"
     )
-    package_quantity = fields.Float(string="On Hand Package Quantity", compute="_compute_package_quantity")
+    package_quantity = fields.Float(string="Package Quantity", compute="_compute_package_quantity")
     counted_package_quantity = fields.Float(
         string="Counted Package Quantity", compute="_compute_counted_package_quantity"
     )
