@@ -4,7 +4,7 @@ from odoo import models, fields, api
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
-    internal_cost = fields.Float(string="Internal Cost", currency_field="currency_id", compute="_compute_internal_cost")
+    internal_cost = fields.Float(string="Internal Cost", compute="_compute_internal_cost")
     sale_order_line_id = fields.Many2one(comodel_name="sale.order.line", string="Sale Order Line")
 
     @api.model
