@@ -46,6 +46,11 @@
                     </h1>
                 </div>
             </xpath>
+
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_total']" position="after">
+                <field name="comments" optional="show"/>
+            </xpath>
+
         </field>
     </record>
 
