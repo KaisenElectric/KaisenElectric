@@ -8,6 +8,7 @@ from . import product_packaging
 from . import stock_quant_package
 from . import stock_quant
 from . import account_move
+from . import account_move_line
 from . import delivery_carrier
 from . import external_integration
 from . import purchase_order
