@@ -16,6 +16,7 @@ class StockMove(models.Model):
             move_line_values["result_package_id"] = self.product_packaging_id.stock_quant_package_id.id
         return move_line_values
 
+    @api.depends("product_packaging_id", "quantity_done", "forecast_availability", "product_qty")
     def _compute_product_packaging_qty(self):
         """Computes product_packaging_qty by qty in packaging and product qty"""
         for record_id in self:
@@ -149,3 +150,13 @@ class StockMove(models.Model):
                                   move.with_company(move.company_id).product_id.cost_method == "fifowh"
                                   and float_is_zero(move.product_id.sudo().quantity_svl, precision_rounding=move.product_id.uom_id.rounding)):
             move.product_id.with_company(move.company_id.id).sudo().write({"standard_price": move._get_price_unit()})
+
+    def _action_assign(self):
+        for move_id in self:
+            if not move_id.package_level_id and  move_id.product_packaging_id.stock_quant_package_id\
+                and not move_id.location_id.should_bypass_reservation():
+                move_id.package_level_id = self.env["stock.package_level"].create({
+                    "package_id": move_id.product_packaging_id.stock_quant_package_id.id,
+                })
+
+        return super()._action_assign()
