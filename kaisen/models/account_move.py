@@ -1,8 +1,13 @@
-from odoo import models, api
+from odoo import models, api, fields
 
 
 class AccountMove(models.Model):
     _inherit = "account.move"
+
+    posted_invoice_line_ids = fields.One2many(comodel_name="account.move.line", inverse_name="move_id",
+                                              string="Invoice lines", copy=False, readonly=True,
+                                              domain=[("exclude_from_invoice_tab", "=", False)],
+                                              states={"posted": [("readonly", False)]})
 
     @api.onchange("name", "highest_name")
     def _onchange_name_warning(self):
