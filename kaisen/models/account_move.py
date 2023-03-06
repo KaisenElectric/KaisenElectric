@@ -34,3 +34,8 @@ class AccountMove(models.Model):
         })
         action = self.env["ir.actions.actions"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
         return dict(action, view_mode="form", res_id=landed_costs.id, views=[(False, "form")])
+
+    def _move_autocomplete_invoice_lines_values(self):
+        values = super()._move_autocomplete_invoice_lines_values()
+        values.pop('posted_invoice_line_ids', None)
+        return values
