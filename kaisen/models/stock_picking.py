@@ -43,7 +43,9 @@ class StockPicking(models.Model):
                         record_id.create_arrival_in_logismart()
                     elif picking_type_code == "outgoing":
                         record_id.create_order_in_logismart()
-                sale_id = self.env["sale.order"].search([("auto_purchase_order_id", "=", record_id.purchase_id.id)], limit=1)
+                sale_id = self.env["sale.order"]
+                if record_id.purchase_id:
+                    sale_id.search([("auto_purchase_order_id", "=", record_id.purchase_id.id)], limit=1)                    
                 if picking_type_code == "incoming" and sale_id:
                     if sale_id.state not in ('done', 'cancel'):
                         sale_id.action_confirm()
