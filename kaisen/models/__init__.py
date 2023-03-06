@@ -24,3 +24,4 @@ from . import product_category
 from . import stock_location
 from . import stock_landed_cost
 from . import stock_valuation_adjustment_lines
+from . import res_partner
