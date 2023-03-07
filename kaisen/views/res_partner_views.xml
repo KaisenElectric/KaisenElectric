@@ -9,6 +9,9 @@
             <xpath expr="//group[@name='accounting_entries']" position="attributes">
                 <attribute name="groups">account.group_account_invoice</attribute>
             </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="registry_number"/>
+            </xpath>
         </field>
     </record>
 
