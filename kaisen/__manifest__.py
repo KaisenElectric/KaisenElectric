@@ -10,6 +10,7 @@
     "depends": [
         "base",
         "purchase",
+        "account",
         "stock",
         "purchase_stock",
         "product",
@@ -44,6 +45,7 @@
         "views/res_company_views.xml",
         "views/res_partner_views.xml",
         "views/stock_valuation_layer_views.xml",
+        "views/account_tax_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS

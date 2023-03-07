@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="kaisen_account_tax_form_view_inherit" model="ir.ui.view">
+        <field name="name">kaisen.acount.tax.form</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="notes_for_printing"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
