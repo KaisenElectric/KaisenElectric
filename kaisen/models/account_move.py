@@ -37,5 +37,5 @@ class AccountMove(models.Model):
 
     def _move_autocomplete_invoice_lines_values(self):
         values = super()._move_autocomplete_invoice_lines_values()
-        values.pop('posted_invoice_line_ids', None)
+        values.pop("posted_invoice_line_ids", None)
         return values
