@@ -17,6 +17,10 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//field[@name='favicon']" position="after">
+                <field name="company_details" groups="base.group_no_one"/>
+                <field name="external_report_layout_id" groups="base.group_no_one"/>
+            </xpath>
         </field>
     </record>
 

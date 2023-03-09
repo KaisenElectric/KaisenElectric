@@ -9,6 +9,7 @@
     "license": "Other proprietary",
     "depends": [
         "base",
+        "web",
         "purchase",
         "account",
         "stock",
@@ -50,6 +51,7 @@
         "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS
         "views/menus.xml",
+        "reports/sale_report_templates.xml",
     ],
     "qweb": [],
     "application": True,
