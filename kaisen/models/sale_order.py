@@ -1,8 +1,18 @@
-from odoo import models, api
+from odoo import models, api, fields
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
+
+    @api.model
+    def _get_default_bank(self):
+        """Method set default value for company_recipient_bank_id"""
+        bank_id = self.env.company.partner_id.bank_ids[:1]
+        return bank_id
+
+    company_recipient_bank_id = fields.Many2one(comodel_name="res.partner.bank", string="Company Recipient Bank",
+                                                help="Bank Account Number to which the invoice will be paid.",
+                                                default=_get_default_bank, check_company=True)
 
     @api.model
     def _prepare_purchase_order_line_data(self, so_line, date_order, company):
