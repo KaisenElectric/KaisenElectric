@@ -243,12 +243,14 @@
 
     <template id="include_vat_number" inherit_id="web.external_layout_boxed">
         <xpath expr="//div[@name='company_address']/span" position="after">
-            <span t-if="doc.company_recipient_bank_id">
-                IBAN: <t t-esc="doc.company_recipient_bank_id.display_name"/>
-            </span>
-            <p t-if="doc.env.company.bank_ids.bank_id">
-                Bank: <t t-esc="''.join(doc.env.company.bank_ids.bank_id.mapped(lambda b_id: '%s, %s' % (b_id.name, b_id.bic)))"/>
-            </p>
+            <t t-if="o and o.env.context.get('proforma')">
+                <span t-if="doc.company_recipient_bank_id">
+                    IBAN: <t t-esc="doc.company_recipient_bank_id.display_name"/>
+                </span>
+                <p t-if="doc.env.company.bank_ids.bank_id">
+                    Bank: <t t-esc="''.join(doc.env.company.bank_ids.bank_id.mapped(lambda b_id: '%s, %s' % (b_id.name, b_id.bic)))"/>
+                </p>
+            </t>
         </xpath>
     </template>
 
