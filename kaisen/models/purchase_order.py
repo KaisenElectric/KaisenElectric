@@ -42,7 +42,7 @@ class PurchaseOrder(models.Model):
         Method adds intercompany_warehouse_id in SO.
         """
         self.ensure_one()
-        result = super()._prepare_sale_order_data(name, partner, company, direct_delivery_address)
+        result = super(PurchaseOrder, self.sudo())._prepare_sale_order_data(name, partner, company, direct_delivery_address)
         result["warehouse_id"] = self.intercompany_warehouse_id.id
         return result
 
