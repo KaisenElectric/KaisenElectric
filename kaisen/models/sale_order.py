@@ -12,18 +12,16 @@ class SaleOrder(models.Model):
 
     company_recipient_bank_id = fields.Many2one(comodel_name="res.partner.bank", string="Company Recipient Bank",
                                                 help="Bank Account Number to which the invoice will be paid.",
-                                                default=_get_default_bank, check_company=True)
+                                                default=_get_default_bank, check_company=False,
+                                                domain="[('id', 'in', domain_bank_ids)]")
+    domain_bank_ids = fields.Many2many(comodel_name="res.partner.bank", string="Partner banks", compute="_compute_domain_bank_ids")
 
-    @api.onchange("company_id")
-    def _onchange_company_id(self):
-        """
-        Method adds domain for company_recipient_bank_id field depends on company_id.
-        """
+    @api.depends("company_id")
+    def _compute_domain_bank_ids(self):
+        """Method compute bank_ids for company_recipient_bank_id domain"""
         for record in self:
-            domain = [("partner_id", "=", record.company_id.partner_id.id)]
-            return {
-                "domain": {"company_recipient_bank_id": domain},
-            }
+            bank_ids = self.env["res.partner.bank"].sudo().search([("partner_id", "=", record.company_id.partner_id.id)])
+            record.domain_bank_ids = bank_ids
 
     @api.model
     def _prepare_purchase_order_line_data(self, so_line, date_order, company):
