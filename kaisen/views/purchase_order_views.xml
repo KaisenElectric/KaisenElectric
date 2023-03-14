@@ -21,7 +21,7 @@
             </xpath>
             <xpath expr="//field[@name='effective_date']" position="after">
                 <field name="is_same_partner" invisible="1"/>
-                <field name="intercompany_warehouse_id" options="{'no_open': True}" force_save="1"
+                <field name="intercompany_warehouse_id" options="{'no_open': True}" force_save="1" context="{'allow_wh': True}"
                        attrs="{'readonly': [('is_same_partner', '!=', True)], 'required': [('is_same_partner', '=', True)]}"/>
             </xpath>
         </field>
