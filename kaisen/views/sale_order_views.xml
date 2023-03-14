@@ -15,6 +15,7 @@
             </xpath>
             <xpath expr="//field[@name='analytic_account_id']" position="after">
                 <field name="company_recipient_bank_id"/>
+                <field name="domain_bank_ids" invisible="1"/>
             </xpath>
         </field>
     </record>
