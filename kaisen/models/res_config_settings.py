@@ -2,6 +2,7 @@ from odoo import models, fields, api, _
 import requests
 from urllib.parse import urlparse
 from odoo.exceptions import UserError
+from json import JSONDecodeError
 
 
 class ResConfigSettings(models.TransientModel):
@@ -55,7 +56,10 @@ class ResConfigSettings(models.TransientModel):
             response = requests.get(url, headers=headers, params=payload, auth=(username, password))
         else:
             response = requests.post(url, headers=headers, json=payload, auth=(username, password))
-        data = response.json()
+        try:
+            data = response.json()
+        except JSONDecodeError:
+            raise UserError(f"Logismart Error:\n{response.text}")
         if not response.ok:
             message = "Logismart Errors:\n" + "\n".join(data.get("errors", {}).values())
             raise UserError(message)
