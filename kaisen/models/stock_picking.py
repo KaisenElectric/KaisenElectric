@@ -20,8 +20,12 @@ class StockPicking(models.Model):
             "country": country_code,
             "fields": "post_id,address,city",
         }
-        data = self.env["res.config.settings"].send_request_to_logismart("get", "/couriers/posts", payload)
-        return [(x.get("post_id"), x.get("address")) for x in data.get("posts") if x.get("city") == city]
+        try:
+            data = self.env["res.config.settings"].send_request_to_logismart("get", "/couriers/posts", payload)
+        except Exception as e:
+            return []
+        else:
+            return [(x.get("post_id"), x.get("address")) for x in data.get("posts") if x.get("city") == city]
 
     external_integration_id = fields.Many2one(comodel_name="external.integration", string="External Integration")
     logismart_delivery_method = fields.Integer(related="carrier_id.logismart_delivery_method", string="Logismart Delivery Method")
