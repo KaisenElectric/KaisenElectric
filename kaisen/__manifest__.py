@@ -24,6 +24,7 @@
         "account_inter_company_rules",
         "stock_landed_costs",
         "stock_account",
+        "icode_utils",
     ],
     "data": [
         # SECURITY
