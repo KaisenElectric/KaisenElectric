@@ -12,6 +12,9 @@
             <xpath expr="//field[@name='vat']" position="after">
                 <field name="registry_number"/>
             </xpath>
+            <xpath expr="//field[@name='country_id']" position="attributes">
+                <attribute name="attrs">{'required': [('user_id', '!=', False)]}</attribute>
+            </xpath>
         </field>
     </record>
 
