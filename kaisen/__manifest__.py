@@ -54,6 +54,11 @@
         "views/menus.xml",
         "reports/sale_report_templates.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "kaisen/static/src/js/account_payment_field.js",
+        ],
+    },
     "qweb": [],
     "application": True,
 }

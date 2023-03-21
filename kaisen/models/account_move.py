@@ -1,4 +1,5 @@
-from odoo import models, api, fields
+from odoo import models, api, fields, _
+from odoo.exceptions import UserError
 
 
 class AccountMove(models.Model):
@@ -8,6 +9,36 @@ class AccountMove(models.Model):
                                               string="Invoice lines", copy=False, readonly=True,
                                               domain=[("exclude_from_invoice_tab", "=", False)],
                                               states={"posted": [("readonly", False)]})
+    invoice_payments_widget = fields.Text(
+        compute_sudo=True
+    )
+
+    def js_remove_outstanding_partial(self, partial_id):
+        """
+        Method added logic to check user groups
+        """
+        self.ensure_one()
+        if not self.env.user.has_group("account.group_account_user") or not self.env.user.has_group("account.group_account_manager"):
+            raise UserError(_("You have no access rights."))
+        return super(AccountMove, self).js_remove_outstanding_partial(partial_id)
+
+    def js_assign_outstanding_line(self, line_id):
+        """
+        Method added logic to check user groups
+        """
+        self.ensure_one()
+        if not self.env.user.has_group("account.group_account_user") or not self.env.user.has_group("account.group_account_manager"):
+            raise UserError(_("You have no access rights."))
+        return super(AccountMove, self).js_assign_outstanding_line(line_id)
+
+    @api.model
+    def check_account_user_group(self):
+        """
+        Method added logic to check user groups
+        """
+        if not self.env.user.has_group("account.group_account_user") or not self.env.user.has_group("account.group_account_manager"):
+            raise UserError(_("You have no access rights."))
+        return True
 
     @api.onchange("name", "highest_name")
     def _onchange_name_warning(self):
