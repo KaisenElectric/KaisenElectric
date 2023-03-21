@@ -42,12 +42,12 @@
     <template id="include_vat_number" inherit_id="web.external_layout_boxed">
         <xpath expr="//div[@name='company_address']/span" position="after">
             <t t-if="o and o.env.context.get('proforma')">
-                <div t-if="o.company_recipient_bank_id">
-                    IBAN: <t t-esc="o.company_recipient_bank_id.display_name"/>
-                </div>
-                <div t-if="env.company.bank_ids.bank_id">
-                    Bank: <t t-esc="''.join(env.company.bank_ids.bank_id.mapped(lambda b_id: '%s, %s' % (b_id.name, b_id.bic)))"/>
-                </div>
+                <t t-if="o.company_recipient_bank_id">
+                    <div name="iban">IBAN: <t t-esc="o.company_recipient_bank_id.acc_number"/></div>
+                    <div name="bank">
+                        Bank: <t t-esc="o.company_recipient_bank_id.bank_id.name"/>, <t t-esc="o.company_recipient_bank_id.bank_id.bic"/>
+                    </div>
+                </t>
             </t>
         </xpath>
     </template>
