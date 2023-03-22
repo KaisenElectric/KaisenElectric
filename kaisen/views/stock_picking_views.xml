@@ -29,6 +29,7 @@
                        values="get_logismart_delivery_posts"
                        context="{'logismart_delivery_method': logismart_delivery_method, 'country_code': country_code, 'city': city}"
                        attrs="{'invisible': [('external_integration_id', '!=', %(kaisen.external_integration_logismart)d)]}"/>
+                <field name="delivery_incoterm" attrs="{'invisible': ['|', ('external_integration_id', '!=', %(kaisen.external_integration_logismart)d), ('logismart_delivery_method', 'not in', [34, 35])], 'required': [('logismart_delivery_method', 'in', [34, 35])]}"/>
             </xpath>
         </field>
     </record>
