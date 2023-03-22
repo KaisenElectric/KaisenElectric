@@ -13,17 +13,6 @@ class PurchaseOrder(models.Model):
         string="Same partner",
         invisible=True
     )
-    
-    @api.onchange("partner_id")
-    def _onchange_partner_id(self):
-        """
-        Method adds domain for field intercompany_warehouse_id depends on partner_id.
-        """
-        for record in self:
-            domain = [("partner_id", "=", record.partner_id.id)]
-            return {
-                "domain": {"intercompany_warehouse_id": domain},
-            }
 
     @api.depends("partner_id")
     def _compute_is_same_partner(self):
