@@ -61,6 +61,6 @@ class ResConfigSettings(models.TransientModel):
         except JSONDecodeError:
             raise UserError(f"Logismart Error:\n{response.text}")
         if not response.ok:
-            message = "Logismart Errors:\n" + "\n".join(data.get("errors", {}).values())
+            message = "Logismart Errors:\n" + "\n".join(data.get("errors", {}).values()) + f"\n{data.get('error', '')}"
             raise UserError(message)
         return data

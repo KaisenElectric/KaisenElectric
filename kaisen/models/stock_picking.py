@@ -2,14 +2,26 @@ from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.addons.payment import utils as payment_utils
 from odoo.tests import Form
+import base64
+
+DELIVERY_INCOTERMS = [("DDP", "DDP"), ("DAP", "DAP")]
 
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+    external_integration_id = fields.Many2one(comodel_name="external.integration", string="External Integration")
+    logismart_delivery_method = fields.Integer(
+        related="carrier_id.logismart_delivery_method", string="Logismart Delivery Method"
+    )
+    country_code = fields.Char(related="sale_id.partner_shipping_id.country_id.code", string="Country Code")
+    city = fields.Char(related="sale_id.partner_shipping_id.city", string="City")
+    logismart_delivery_post = fields.Char(string="Logismart Delivery Post")
+    delivery_incoterm = fields.Selection(selection=DELIVERY_INCOTERMS, string="Delivery Incoterm")
+
     @api.model
     def get_logismart_delivery_posts(self):
-        """Return Logismart delivery posts by context and LOgismart API"""
+        """Return Logismart delivery posts by context and Logismart API"""
         logismart_delivery_method = self.env.context.get("logismart_delivery_method")
         country_code = self.env.context.get("country_code")
         city = self.env.context.get("city")
@@ -26,12 +38,6 @@ class StockPicking(models.Model):
             return []
         else:
             return [(x.get("post_id"), x.get("address")) for x in data.get("posts") if x.get("city") == city]
-
-    external_integration_id = fields.Many2one(comodel_name="external.integration", string="External Integration")
-    logismart_delivery_method = fields.Integer(related="carrier_id.logismart_delivery_method", string="Logismart Delivery Method")
-    country_code = fields.Char(related="sale_id.partner_shipping_id.country_id.code", string="Country Code")
-    city = fields.Char(related="sale_id.partner_shipping_id.city", string="City")
-    logismart_delivery_post = fields.Char(string="Logismart Delivery Post")
 
     @api.constrains("state")
     def _check_state(self):
@@ -51,14 +57,16 @@ class StockPicking(models.Model):
                 if record_id.purchase_id:
                     sale_id = sale_id.search([("auto_purchase_order_id", "=", record_id.purchase_id.id)], limit=1)
                 if picking_type_code == "incoming" and sale_id:
-                    if sale_id.state not in ('done', 'cancel'):
+                    if sale_id.state not in ("done", "cancel"):
                         sale_id.action_confirm()
                     for picking_id in sale_id.picking_ids:
                         for move_id in picking_id.move_lines:
                             move_id.quantity_done = move_id.product_uom_qty
                         wizard_action = picking_id.button_validate()
                         if wizard_action is not True:
-                            Form(self.env[wizard_action['res_model']].with_context(wizard_action['context'])).save().process()
+                            Form(
+                                self.env[wizard_action["res_model"]].with_context(wizard_action["context"])
+                            ).save().process()
 
     def get_products_for_logismart(self):
         """Returns products for logismart"""
@@ -67,12 +75,13 @@ class StockPicking(models.Model):
         for move_id in self.move_ids_without_package:
             if not move_id.product_packaging_qty.is_integer() or move_id.product_packaging_qty <= 0:
                 raise UserError("Packaging Quality must be whole number")
-            products.append(
-                {
-                    "product_code": move_id.get_logismart_product_code(),
-                    "quantity": int(move_id.product_packaging_qty),
-                }
-            )
+            product = {
+                "product_code": move_id.get_logismart_product_code(),
+                "quantity": int(move_id.product_packaging_qty),
+            }
+            if move_id.product_id.product_tmpl_id.hs_code:
+                product["hs_code"] = move_id.product_id.product_tmpl_id.hs_code
+            products.append(product)
         return products
 
     def create_arrival_in_logismart(self):
@@ -117,4 +126,19 @@ class StockPicking(models.Model):
                 "country_code": self.sale_id.partner_shipping_id.country_id.code,
                 "total": self.sale_id.amount_total,
             }
+            if self.delivery_incoterm:
+                payload["delivery_incoterm"] = self.delivery_incoterm
+            attachment_id = self.env["ir.attachment"].search(
+                [("res_model", "=", self._name), ("res_id", "=", self.id)], order="create_date desc", limit=1
+            )
+            if attachment_id:
+                payload["document"] = {
+                    "pdf": attachment_id.datas.decode(),
+                    "name": attachment_id.name,
+                }
+            # if method of delivery is "DHL" then hs_code in required for products
+            if payload.get("delivery", {}).get("method") in (24, 25, 26, 27, 28, 30, 34, 35, 39):
+                for product in payload["products"]:
+                    if not product.get("hs_code"):
+                        raise UserError(f"HS Code field not filled in product {product.get('product_code')}")
             self.env["res.config.settings"].send_request_to_logismart("post", "/orders/add", payload)
