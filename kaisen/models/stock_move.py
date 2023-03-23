@@ -48,11 +48,22 @@ class StockMove(models.Model):
     def get_logismart_product_code(self):
         """Returns logismart_product_code by product and packaging"""
         self.ensure_one()
-        if not self.product_packaging_id:
-            raise UserError(f"Packaging field is not filled in for {self.product_id.name}")
-        logismart_product_code = self.product_id.packaging_ids.filtered(lambda x: x == self.product_packaging_id)[
-            :1
-        ].logismart_product_code
+        logismart_product_code = None
+        if self.picking_id.is_packing_operation:
+            if not self.move_line_ids[:1].package_id:
+                raise UserError(f"Source Package field is not filled for {self.product_id.name}")
+            if not self.move_line_ids[:1].result_package_id:
+                raise UserError(f"Destination Package field is not filled for {self.product_id.name}")
+            if self.env.context.get("is_internal_arrival"):
+                logismart_product_code = self.move_line_ids[:1].result_package_id.product_packaging_id.logismart_product_code
+            elif self.env.context.get("is_internal_order"):
+                logismart_product_code = self.move_line_ids[:1].package_id.product_packaging_id.logismart_product_code
+        else:
+            if not self.product_packaging_id:
+                raise UserError(f"Packaging field is not filled for {self.product_id.name}")
+            logismart_product_code = self.product_id.packaging_ids.filtered(lambda x: x == self.product_packaging_id)[
+                :1
+            ].logismart_product_code
         if not logismart_product_code:
             raise UserError(f"Logismart product code field is not filled in {self.product_id.name}")
         return logismart_product_code
