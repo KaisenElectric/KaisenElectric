@@ -5,6 +5,7 @@ from odoo.tests import Form
 import base64
 
 DELIVERY_INCOTERMS = [("DDP", "DDP"), ("DAP", "DAP")]
+from datetime import timedelta
 
 
 class StockPicking(models.Model):
@@ -14,10 +15,11 @@ class StockPicking(models.Model):
     logismart_delivery_method = fields.Integer(
         related="carrier_id.logismart_delivery_method", string="Logismart Delivery Method"
     )
-    country_code = fields.Char(related="sale_id.partner_shipping_id.country_id.code", string="Country Code")
-    city = fields.Char(related="sale_id.partner_shipping_id.city", string="City")
+    country_code = fields.Char(string="Country Code", compute="_compute_country_code")
+    city = fields.Char(string="City", compute="_compute_city")
     logismart_delivery_post = fields.Char(string="Logismart Delivery Post")
     delivery_incoterm = fields.Selection(selection=DELIVERY_INCOTERMS, string="Delivery Incoterm")
+    is_packing_operation = fields.Boolean(string="Packing Operation")
 
     @api.model
     def get_logismart_delivery_posts(self):
@@ -39,6 +41,24 @@ class StockPicking(models.Model):
         else:
             return [(x.get("post_id"), x.get("address")) for x in data.get("posts") if x.get("city") == city]
 
+    @api.depends("is_packing_operation", "sale_id.partner_shipping_id.country_id.code", "location_dest_id.warehouse_id.partner_id.country_id.code")
+    def _compute_country_code(self):
+        """Computes country code for stock picking"""
+        for record_id in self:
+            if record_id.is_packing_operation:
+                record_id.country_code = record_id.location_dest_id.warehouse_id.partner_id.country_id.code
+            else:
+                record_id.country_code = record_id.sale_id.partner_shipping_id.country_id.code
+
+    @api.depends("is_packing_operation", "sale_id.partner_shipping_id.city", "location_dest_id.warehouse_id.partner_id.city")
+    def _compute_city(self):
+        """Computes city for stock picking"""
+        for record_id in self:
+            if record_id.is_packing_operation:
+                record_id.city = record_id.location_dest_id.warehouse_id.partner_id.city
+            else:
+                record_id.city = record_id.sale_id.partner_shipping_id.city
+
     @api.constrains("state")
     def _check_state(self):
         """Checks field product_packaging_qty for integer when moving stock picking to done stage"""
@@ -49,7 +69,12 @@ class StockPicking(models.Model):
                     if not move_id.product_packaging_qty.is_integer():
                         raise UserError("Packaging Quality must be whole number")
                 if record_id.external_integration_id == self.env.ref("kaisen.external_integration_logismart"):
-                    if picking_type_code == "incoming":
+                    if picking_type_code != "internal" and record_id.is_packing_operation:
+                        raise UserError("Packing Operation only for internal transfers")
+                    if picking_type_code == "internal" and record_id.is_packing_operation:
+                        record_id.with_context(is_internal_order=True).create_order_in_logismart()
+                        record_id.with_context(is_internal_arrival=True).create_arrival_in_logismart()
+                    elif picking_type_code == "incoming":
                         record_id.create_arrival_in_logismart()
                     elif picking_type_code == "outgoing":
                         record_id.create_order_in_logismart()
@@ -73,16 +98,28 @@ class StockPicking(models.Model):
         self.ensure_one()
         products = []
         for move_id in self.move_ids_without_package:
-            if not move_id.product_packaging_qty.is_integer() or move_id.product_packaging_qty <= 0:
-                raise UserError("Packaging Quality must be whole number")
+            self.check_package_qty(move_id.product_packaging_qty, "Packaging Quantity")
+            quantity = int(move_id.product_packaging_qty)
+            if self.env.context.get("is_internal_arrival"):
+                destination_package_qty = move_id.move_line_ids[:1].result_package_id.product_packaging_id.qty
+                self.check_package_qty(destination_package_qty, "Destination Packaging Quantity")
+                source_package_qty = move_id.move_line_ids[:1].package_id.product_packaging_id.qty
+                self.check_package_qty(source_package_qty, "Source Packaging Quantity")
+                quantity = move_id.product_packaging_qty * source_package_qty / destination_package_qty
+                self.check_package_qty(quantity, "Transfer Packaging Quantity")
             product = {
                 "product_code": move_id.get_logismart_product_code(),
-                "quantity": int(move_id.product_packaging_qty),
+                "quantity": quantity,
             }
             if move_id.product_id.product_tmpl_id.hs_code:
                 product["hs_code"] = move_id.product_id.product_tmpl_id.hs_code
             products.append(product)
         return products
+
+    @staticmethod
+    def check_package_qty(amount, field_name):
+        if not amount.is_integer() or amount <= 0:
+            raise UserError(f"{field_name} must be whole number")
 
     def create_arrival_in_logismart(self):
         """Creates arrival in logismart"""
@@ -110,6 +147,10 @@ class StockPicking(models.Model):
             }
             if self.logismart_delivery_post:
                 delivery["post"] = int(self.logismart_delivery_post)
+            if self.is_packing_operation:
+                partner_id = self.location_dest_id.warehouse_id.partner_id
+            else:
+                partner_id = self.sale_id.partner_shipping_id
             payload = {
                 "order_code": self.name,
                 "products": products,
@@ -119,11 +160,11 @@ class StockPicking(models.Model):
                 "last_name": last_name,
                 "email": self.partner_id.email,
                 "phone": self.partner_id.phone,
-                "address": self.sale_id.partner_shipping_id.street_name,
-                "house": self.sale_id.partner_shipping_id.street_number,
-                "postcode": self.sale_id.partner_shipping_id.zip,
-                "city": self.sale_id.partner_shipping_id.city,
-                "country_code": self.sale_id.partner_shipping_id.country_id.code,
+                "address": partner_id.street_name,
+                "house": partner_id.street_number,
+                "postcode": partner_id.zip,
+                "city": self.city,
+                "country_code": partner_id.country_id.code,
                 "total": self.sale_id.amount_total,
             }
             if self.delivery_incoterm:

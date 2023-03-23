@@ -11,6 +11,7 @@
             </xpath>
             <xpath expr="//field[@name='backorder_id']" position="after">
                 <field name="external_integration_id" widget="selection" no_create="1" no_open="1" options="{'no_quick_create': True, 'no_create_edit' : True, 'no_open': True, 'no_create': True}"/>
+                <field name="is_packing_operation" attrs="{'invisible': [('external_integration_id', '!=', %(kaisen.external_integration_logismart)d)]}"/>
             </xpath>
         </field>
     </record>
