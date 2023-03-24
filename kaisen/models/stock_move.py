@@ -58,6 +58,11 @@ class StockMove(models.Model):
                 logismart_product_code = self.move_line_ids[:1].result_package_id.product_packaging_id.logismart_product_code
             elif self.env.context.get("is_internal_order"):
                 logismart_product_code = self.move_line_ids[:1].package_id.product_packaging_id.logismart_product_code
+        elif self.picking_id.is_external_transfer:
+            if not self.move_line_ids[:1].package_id:
+                raise UserError(f"Source Package field is not filled for {self.product_id.name}")
+            elif self.env.context.get("is_internal_order"):
+                logismart_product_code = self.move_line_ids[:1].package_id.product_packaging_id.logismart_product_code
         else:
             if not self.product_packaging_id:
                 raise UserError(f"Packaging field is not filled for {self.product_id.name}")

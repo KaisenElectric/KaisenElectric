@@ -20,6 +20,8 @@ class StockPicking(models.Model):
     logismart_delivery_post = fields.Char(string="Logismart Delivery Post")
     delivery_incoterm = fields.Selection(selection=DELIVERY_INCOTERMS, string="Delivery Incoterm")
     is_packing_operation = fields.Boolean(string="Packing Operation")
+    is_external_transfer = fields.Boolean(string="External Transfer")
+    picking_type_code = fields.Selection(related="picking_type_id.code", string="Picking Type Code")
 
     @api.model
     def get_logismart_delivery_posts(self):
@@ -41,12 +43,26 @@ class StockPicking(models.Model):
         else:
             return [(x.get("post_id"), x.get("address")) for x in data.get("posts") if x.get("city") == city]
 
+    @api.onchange("is_packing_operation")
+    def _onchange_is_packing_operation(self):
+        for record_id in self:
+            if record_id.is_packing_operation:
+                record_id.is_external_transfer = False
+
+    @api.onchange("is_external_transfer")
+    def _onchange_is_external_transfer(self):
+        for record_id in self:
+            if record_id.is_external_transfer:
+                record_id.is_packing_operation = False
+
     @api.depends("is_packing_operation", "sale_id.partner_shipping_id.country_id.code", "location_dest_id.warehouse_id.partner_id.country_id.code")
     def _compute_country_code(self):
         """Computes country code for stock picking"""
         for record_id in self:
-            if record_id.is_packing_operation:
+            if record_id.is_external_transfer:
                 record_id.country_code = record_id.location_dest_id.warehouse_id.partner_id.country_id.code
+            elif record_id.is_packing_operation:
+                record_id.city = record_id.partner_id.country_id.code
             else:
                 record_id.country_code = record_id.sale_id.partner_shipping_id.country_id.code
 
@@ -54,8 +70,10 @@ class StockPicking(models.Model):
     def _compute_city(self):
         """Computes city for stock picking"""
         for record_id in self:
-            if record_id.is_packing_operation:
+            if record_id.is_external_transfer:
                 record_id.city = record_id.location_dest_id.warehouse_id.partner_id.city
+            elif record_id.is_packing_operation:
+                record_id.city = record_id.partner_id.city
             else:
                 record_id.city = record_id.sale_id.partner_shipping_id.city
 
@@ -69,11 +87,13 @@ class StockPicking(models.Model):
                     if not move_id.product_packaging_qty.is_integer():
                         raise UserError("Packaging Quality must be whole number")
                 if record_id.external_integration_id == self.env.ref("kaisen.external_integration_logismart"):
-                    if picking_type_code != "internal" and record_id.is_packing_operation:
+                    if picking_type_code != "internal" and (record_id.is_packing_operation or record_id.is_external_transfer):
                         raise UserError("Packing Operation only for internal transfers")
                     if picking_type_code == "internal" and record_id.is_packing_operation:
                         record_id.with_context(is_internal_order=True).create_order_in_logismart()
                         record_id.with_context(is_internal_arrival=True).create_arrival_in_logismart()
+                    elif picking_type_code == "internal" and record_id.is_external_transfer:
+                        record_id.with_context(is_internal_order=True).create_order_in_logismart()
                     elif picking_type_code == "incoming":
                         record_id.create_arrival_in_logismart()
                     elif picking_type_code == "outgoing":
@@ -98,8 +118,6 @@ class StockPicking(models.Model):
         self.ensure_one()
         products = []
         for move_id in self.move_ids_without_package:
-            self.check_package_qty(move_id.product_packaging_qty, "Packaging Quantity")
-            quantity = int(move_id.product_packaging_qty)
             if self.env.context.get("is_internal_arrival"):
                 destination_package_qty = move_id.move_line_ids[:1].result_package_id.product_packaging_id.qty
                 self.check_package_qty(destination_package_qty, "Destination Packaging Quantity")
@@ -107,12 +125,15 @@ class StockPicking(models.Model):
                 self.check_package_qty(source_package_qty, "Source Packaging Quantity")
                 quantity = move_id.product_packaging_qty * source_package_qty / destination_package_qty
                 self.check_package_qty(quantity, "Transfer Packaging Quantity")
+            else:
+                self.check_package_qty(move_id.product_packaging_qty, "Packaging Quantity")
+                quantity = int(move_id.product_packaging_qty)
             product = {
                 "product_code": move_id.get_logismart_product_code(),
                 "quantity": quantity,
             }
-            if move_id.product_id.product_tmpl_id.hs_code:
-                product["hs_code"] = move_id.product_id.product_tmpl_id.hs_code
+            if move_id.product_id.hs_code:
+                product["hs_code"] = move_id.product_id.hs_code
             products.append(product)
         return products
 
@@ -141,16 +162,18 @@ class StockPicking(models.Model):
                 raise UserError("Carrier field not filled")
             if not self.carrier_id.logismart_delivery_method:
                 raise UserError("You need to fill in Logismart Shipping Method field in Carrier")
-            first_name, last_name = payment_utils.split_partner_name(self.partner_id.name)
             delivery = {
                 "method": self.carrier_id.logismart_delivery_method,
             }
             if self.logismart_delivery_post:
                 delivery["post"] = int(self.logismart_delivery_post)
-            if self.is_packing_operation:
+            if self.is_external_transfer:
                 partner_id = self.location_dest_id.warehouse_id.partner_id
+            elif self.is_packing_operation:
+                partner_id = self.partner_id
             else:
                 partner_id = self.sale_id.partner_shipping_id
+            first_name, last_name = payment_utils.split_partner_name(partner_id.name)
             payload = {
                 "order_code": self.name,
                 "products": products,
@@ -158,8 +181,8 @@ class StockPicking(models.Model):
                 "customer_code": f"{first_name} {last_name}",
                 "first_name": first_name,
                 "last_name": last_name,
-                "email": self.partner_id.email,
-                "phone": self.partner_id.phone,
+                "email": partner_id.email,
+                "phone": partner_id.phone,
                 "address": partner_id.street_name,
                 "house": partner_id.street_number,
                 "postcode": partner_id.zip,
