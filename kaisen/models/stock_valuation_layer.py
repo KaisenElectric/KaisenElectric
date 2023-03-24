@@ -4,7 +4,16 @@ from odoo import models, fields
 class StockValuationLayer(models.Model):
     _inherit = "stock.valuation.layer"
 
-    warehouse_id = fields.Many2one("stock.warehouse", string="Warehouse")
+    warehouse_id = fields.Many2one(
+        comodel_name="stock.warehouse",
+        string="Warehouse"
+    )
+    average_unit_value = fields.Monetary(
+        string="Average Unit Value",
+        related="unit_cost",
+        store=True,
+        group_operator="avg"
+    )
 
     def create(self, values):
         result = super().create(values)
