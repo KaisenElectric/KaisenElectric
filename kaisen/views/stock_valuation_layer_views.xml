@@ -11,4 +11,15 @@
         </field>
     </record>
 
+    <record id="kaisen_stock_valuation_layer_pivot_inherit" model="ir.ui.view">
+        <field name="name">stock.valuation.layer.pivot</field>
+        <field name="model">stock.valuation.layer</field>
+        <field name="inherit_id" ref="stock_account.stock_valuation_layer_pivot"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='value']" position="after">
+                <field name="average_unit_value" type="measure" string="Avg. Unit Value"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
