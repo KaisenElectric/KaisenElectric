@@ -11,7 +11,9 @@
             </xpath>
             <xpath expr="//field[@name='backorder_id']" position="after">
                 <field name="external_integration_id" widget="selection" no_create="1" no_open="1" options="{'no_quick_create': True, 'no_create_edit' : True, 'no_open': True, 'no_create': True}"/>
-                <field name="is_packing_operation" attrs="{'invisible': [('external_integration_id', '!=', %(kaisen.external_integration_logismart)d)]}"/>
+                <field name="picking_type_code" invisible="1"/>
+                <field name="is_packing_operation" attrs="{'invisible': ['|', ('external_integration_id', '!=', %(kaisen.external_integration_logismart)d), ('picking_type_code', '!=', 'internal')]}"/>
+                <field name="is_external_transfer" attrs="{'invisible': ['|', ('external_integration_id', '!=', %(kaisen.external_integration_logismart)d), ('picking_type_code', '!=', 'internal')]}"/>
             </xpath>
         </field>
     </record>
