@@ -5,13 +5,35 @@ from odoo.exceptions import UserError
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    posted_invoice_line_ids = fields.One2many(comodel_name="account.move.line", inverse_name="move_id",
-                                              string="Invoice lines", copy=False, readonly=True,
-                                              domain=[("exclude_from_invoice_tab", "=", False)],
-                                              states={"posted": [("readonly", False)]})
-    invoice_payments_widget = fields.Text(
-        compute_sudo=True
+    posted_invoice_line_ids = fields.One2many(
+        comodel_name="account.move.line",
+        inverse_name="move_id",
+        string="Invoice lines",
+        copy=False,
+        readonly=True,
+        domain=[("exclude_from_invoice_tab", "=", False)],
+        states={"posted": [("readonly", False)]}
     )
+    invoice_payments_widget = fields.Text(
+        compute_sudo=True,
+    )
+    last_payment_date = fields.Date(
+        string="Paid on",
+        compute="_compute_last_payment_date",
+        store=True,
+    )
+
+    @api.depends("move_type", "payment_state", "line_ids.amount_residual")
+    def _compute_last_payment_date(self):
+        """
+        Method for calculating the last_payment_date field
+        """
+        for move_id in self:
+            content = move_id._get_reconciled_info_JSON_values()
+            date = content[-1].get("date") if content else False
+            move_id.write({
+                "last_payment_date": date,
+            })
 
     def js_remove_outstanding_partial(self, partial_id):
         """
