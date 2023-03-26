@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class ResPartner(models.Model):
@@ -7,6 +7,23 @@ class ResPartner(models.Model):
     registry_number = fields.Char(string="Registry Number")
     user_id = fields.Many2one(inverse="_inverse_user_id")
     country_id = fields.Many2one(inverse="_inverse_country_id")
+
+    @api.onchange("user_id")
+    def _onchange_user_id(self):
+        """
+        Method change team_id depends on user_id
+        """
+        for record in self:
+            id_team = False
+            user_id = record.user_id
+            if user_id:
+                team_id = self.env["crm.team"].search([
+                    ("user_id", "=", user_id.id),
+                ], limit=1)
+                id_team = team_id.id
+            record.update({
+                "team_id": id_team,
+            })
 
     def _inverse_user_id(self):
         """

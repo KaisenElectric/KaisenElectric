@@ -25,6 +25,7 @@
         "stock_landed_costs",
         "stock_account",
         "icode_utils",
+        "sales_team",
     ],
     "data": [
         # SECURITY
