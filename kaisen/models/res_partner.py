@@ -18,7 +18,7 @@ class ResPartner(models.Model):
             user_id = record.user_id
             if user_id:
                 team_id = self.env["crm.team"].search([
-                    ("user_id", "=", user_id.id),
+                    ("member_ids", "=", user_id.id),
                 ], limit=1)
                 id_team = team_id.id
             record.update({
