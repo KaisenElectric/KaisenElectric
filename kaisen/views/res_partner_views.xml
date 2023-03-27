@@ -18,4 +18,15 @@
         </field>
     </record>
 
+        <record id="kaisen_res_partner_view_team_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="sales_team.res_partner_view_team"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='team_id']" position="attributes">
+                <attribute name="groups"></attribute>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
