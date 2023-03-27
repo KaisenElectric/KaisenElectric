@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="kaisen_report_invoice_with_payments_inherit" inherit_id="account.report_invoice_with_payments">
+            <xpath expr="//t[@t-set='print_with_payments']" position="after">
+                <t t-set="o" t-value="o.with_context(report_invoice=True)"/>
+            </xpath>
+        </template>
+
+        <template id="kaisen_report_invoice_inherit" inherit_id="account.report_invoice">
+            <xpath expr="//t[@t-set='lang']" position="after">
+                <t t-set="o" t-value="o.with_context(report_invoice=True)"/>
+            </xpath>
+        </template>
+
+        <template id="kaisen_report_invoice_document_registry_number" inherit_id="account.report_invoice_document">
+            <xpath expr="//t[@t-set='address']" position="inside">
+                <p t-if="o.partner_id.registry_number">Registration number:
+                    <span t-field="o.partner_id.registry_number"/>
+                </p>
+            </xpath>
+            <xpath expr="//span[@t-field='o.invoice_payment_term_id.note']" position="before">
+                <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                    <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                    <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                        <t t-set="notes_for_printing" t-value="o.posted_invoice_line_ids.tax_ids.filtered(lambda t_id: t_id.tax_group_id.id == amount_by_group.get('tax_group_id')).mapped('notes_for_printing')"/>
+                        <t t-foreach="notes_for_printing" t-as="note_for_printing">
+                            <p t-if="note_for_printing">
+                                *) <t t-esc="note_for_printing"/>
+                            </p>
+                        </t>
+                    </t>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="kaisen_include_vat_number" inherit_id="web.external_layout_boxed">
+            <xpath expr="//div[@name='company_address']/span" position="after">
+                <t t-if="o and o.env.context.get('report_invoice')">
+                    <t t-if="o.partner_bank_id">
+                        <div name="iban">IBAN: <t t-esc="o.partner_bank_id.acc_number"/></div>
+                        <div name="bank">
+                            Bank: <t t-esc="o.partner_bank_id.bank_id.name"/>, <t t-esc="o.partner_bank_id.bank_id.bic"/>
+                        </div>
+                    </t>
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
