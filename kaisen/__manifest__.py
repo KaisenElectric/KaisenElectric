@@ -54,6 +54,7 @@
         # REPORTS
         "views/menus.xml",
         "reports/sale_report_templates.xml",
+        "reports/invoice_report_templates.xml",
     ],
     "assets": {
         "web.assets_backend": [
