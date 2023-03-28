@@ -9,17 +9,18 @@
         </xpath>
 
         <xpath expr="//p[@t-field='doc.note']" position="before">
-                <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
-                    <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
-                    <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
-                        <t t-set="notes_for_printing" t-value="doc.order_line.tax_id.filtered(lambda t_id: t_id.tax_group_id.id == amount_by_group.get('tax_group_id')).mapped('notes_for_printing')"/>
-                        <t t-foreach="notes_for_printing" t-as="note_for_printing">
-                            <p t-if="note_for_printing">
-                                *) <t t-esc="note_for_printing"/>
-                            </p>
-                        </t>
+            <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                    <t t-set="notes_for_printing"
+                       t-value="doc.order_line.tax_id.filtered(lambda t_id: t_id.tax_group_id.id == amount_by_group.get('tax_group_id')).mapped('notes_for_printing')"/>
+                    <t t-foreach="notes_for_printing" t-as="note_for_printing">
+                        <p t-if="note_for_printing">
+                            *) <t t-esc="note_for_printing"/>
+                        </p>
                     </t>
                 </t>
+            </t>
         </xpath>
     </template>
 
@@ -29,7 +30,12 @@
                 <t t-set="notes_for_printing" t-value="[bool(i.notes_for_printing) for i in doc.order_line.tax_id.filtered(lambda t_id: t_id.tax_group_id.id == amount_by_group.get('tax_group_id'))]"/>
             </t>
             <t t-else="">
-                <t t-set="notes_for_printing" t-value="list()"/>
+                <t t-if="o and o.env.context.get('report_invoice')">
+                    <t t-set="notes_for_printing" t-value="[bool(i.notes_for_printing) for i in o.posted_invoice_line_ids.tax_ids.filtered(lambda t_id: t_id.tax_group_id.id == amount_by_group.get('tax_group_id'))]"/>
+                </t>
+                <t t-else="">
+                    <t t-set="notes_for_printing" t-value="list()"/>
+                </t>
             </t>
         </xpath>
         <xpath expr='//span[@t-esc="amount_by_group[&apos;tax_group_name&apos;]"]' position="after">
