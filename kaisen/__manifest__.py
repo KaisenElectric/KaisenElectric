@@ -59,6 +59,7 @@
     "assets": {
         "web.assets_backend": [
             "kaisen/static/src/js/account_payment_field.js",
+            "kaisen/static/src/js/pivot_stock_valuation_layer_avg_price_unit.js",
         ],
     },
     "qweb": [],
