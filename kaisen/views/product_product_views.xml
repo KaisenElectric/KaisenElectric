@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="kaisen_product_normal_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.product.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
