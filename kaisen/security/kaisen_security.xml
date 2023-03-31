@@ -93,6 +93,7 @@
     <record id="group_team_lead" model="res.groups">
         <field name="name">User: Team Lead</field>
         <field name="category_id" ref="base.module_category_sales_sales"/>
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
         <field name="comment">The user will have access to their own team's records in the sales application.</field>
     </record>
 
