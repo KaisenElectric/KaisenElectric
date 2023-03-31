@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='company_id']" position="after">
                 <field name="warehouse_id"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
             </xpath>
         </field>
     </record>
@@ -18,6 +19,16 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='value']" position="after">
                 <field name="average_unit_value" type="measure" string="Avg. Unit Value"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="kaisen_view_inventory_valuation_search_inherit" model="ir.ui.view">
+        <field name="model">stock.valuation.layer</field>
+        <field name="inherit_id" ref="stock_account.view_inventory_valuation_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='group_by_product_id']" position="after">
+                <filter string="Tags" name="tag_ids" context="{'group_by': 'tag_ids'}"/>
             </xpath>
         </field>
     </record>

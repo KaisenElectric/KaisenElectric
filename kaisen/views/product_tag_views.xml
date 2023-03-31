@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="kaisen_product_tag_form" model="ir.ui.view">
+        <field name="name">product.tag.form</field>
+        <field name="model">product.tag</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" widget="color_picker"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="kaisen_product_tag_tree" model="ir.ui.view">
+        <field name="name">product.tag.tree</field>
+        <field name="model">product.tag</field>
+        <field name="arch" type="xml">
+            <tree string="Tags" editable="bottom" sample="1">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="kaisen_product_tag_action" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.tag</field>
+        <field name="view_mode">tree</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create tags
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            id="product_tag_menu"
+            name="Tags"
+            action="kaisen.kaisen_product_tag_action"
+            parent="stock.menu_stock_config_settings"
+            sequence="301"
+    />
+
+</odoo>

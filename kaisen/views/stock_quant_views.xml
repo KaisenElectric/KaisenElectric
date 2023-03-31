@@ -41,6 +41,9 @@
             <xpath expr="//field[@name='available_quantity']" position="before">
                 <field name="available_package_quantity" optional="show"/>
             </xpath>
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+            </xpath>
         </field>
     </record>
 
@@ -61,6 +64,17 @@
             </xpath>
             <xpath expr="//field[@name='inventory_quantity']" position="before">
                 <field name="counted_package_quantity" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="kaisen_quant_search_view_inherit" model="ir.ui.view">
+        <field name="name">stock.quant.search</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.quant_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='company']" position="after">
+                <filter string="Tags" name="tag_ids" context="{'group_by': 'tag_ids'}"/>
             </xpath>
         </field>
     </record>

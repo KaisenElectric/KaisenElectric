@@ -27,3 +27,6 @@ from . import stock_valuation_adjustment_lines
 from . import res_partner
 from . import account_tax
 from . import stock_warehouse
+from . import product_tag
+from . import product_template
+from . import product_product

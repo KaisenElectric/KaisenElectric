@@ -49,6 +49,9 @@
         "views/res_partner_views.xml",
         "views/stock_valuation_layer_views.xml",
         "views/account_tax_views.xml",
+        "views/product_tag_views.xml",
+        "views/product_template_views.xml",
+        "views/product_product_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS
