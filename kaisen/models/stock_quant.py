@@ -6,14 +6,24 @@ class StockQuant(models.Model):
     _inherit = "stock.quant"
 
     on_hand_package_quantity = fields.Float(
-        string="On Hand Package Quantity", compute="_compute_on_hand_package_quantity"
+        string="On Hand Package Quantity",
+        compute="_compute_on_hand_package_quantity",
     )
     available_package_quantity = fields.Float(
-        string="Available Package Quantity", compute="_compute_available_package_quantity"
+        string="Available Package Quantity",
+        compute="_compute_available_package_quantity",
     )
-    package_quantity = fields.Float(string="Package Quantity", compute="_compute_package_quantity")
+    package_quantity = fields.Float(
+        string="Package Quantity",
+        compute="_compute_package_quantity",
+    )
     counted_package_quantity = fields.Float(
-        string="Counted Package Quantity", compute="_compute_counted_package_quantity"
+        string="Counted Package Quantity",
+        compute="_compute_counted_package_quantity",
+    )
+    tag_ids = fields.Many2many(
+        comodel_name="product.tag",
+        string="Tags",
     )
 
     @api.depends("inventory_quantity_auto_apply")
@@ -48,3 +58,15 @@ class StockQuant(models.Model):
         if quantity != 0 and packaging_id.qty != 0:
             return float_round(quantity / packaging_id.qty, precision_rounding=packaging_id.product_uom_id.rounding)
         return 0
+
+    @api.model
+    def create(self, vals):
+        """
+        Method added tag_ids for SQ
+        """
+        quant_id = super(StockQuant, self).create(vals)
+        if quant_id.product_tmpl_id.tag_ids:
+            quant_id.write({
+                "tag_ids": [(4, tag_id) for tag_id in quant_id.product_tmpl_id.tag_ids.ids]
+            })
+        return quant_id
