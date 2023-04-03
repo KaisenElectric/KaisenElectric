@@ -23,3 +23,12 @@ class StockWarehouse(models.Model):
         if self.env.context.get("allow_wh"):
             self = self.sudo()
         return super().search_read(domain=domain, fields=fields, offset=offset, limit=limit, order=order, **read_kwargs)
+
+    def _read(self, fields):
+        """
+        Override method to allow searching records even if the current user
+        does not have read access to them.
+        """
+        if self.env.context.get("allow_wh"):
+            self = self.sudo()
+        return super()._read(fields)
