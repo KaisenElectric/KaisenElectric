@@ -8,12 +8,14 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='package_id']" position="attributes">
                 <attribute name="domain">['|', ('location_id', '=', location_id), '&amp;', ('product_packaging_id.product_id', '=', product_id), ('product_packaging_id.logismart_product_code', '!=', False)]</attribute>
+                <attribute name="options">{'no_edit': True, 'no_create': True, 'no_open': True}</attribute>
             </xpath>
             <xpath expr="//field[@name='result_package_id']" position="after">
                 <field name="product_packaging_id"/>
             </xpath>
             <xpath expr="//field[@name='result_package_id']" position="attributes">
                 <attribute name="domain">['|', ('product_packaging_id', '=', False), '&amp;', ('product_packaging_id', '!=', False), ('product_packaging_id.product_id', '=', product_id)]</attribute>
+                <attribute name="options">{'no_edit': True, 'no_create': True, 'no_open': True}</attribute>
             </xpath>
         </field>
     </record>
