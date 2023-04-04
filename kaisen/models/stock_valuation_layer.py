@@ -14,6 +14,10 @@ class StockValuationLayer(models.Model):
         store=True,
         group_operator="avg"
     )
+    tag_ids = fields.Many2many(
+        comodel_name="product.tag",
+        string="Tags",
+    )
 
     def create(self, values):
         result = super().create(values)
