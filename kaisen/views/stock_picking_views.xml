@@ -15,6 +15,9 @@
                 <field name="is_packing_operation" attrs="{'invisible': ['|', ('external_integration_id', '!=', %(kaisen.external_integration_logismart)d), ('picking_type_code', '!=', 'internal')]}"/>
                 <field name="is_external_transfer" attrs="{'invisible': ['|', ('external_integration_id', '!=', %(kaisen.external_integration_logismart)d), ('picking_type_code', '!=', 'internal')]}"/>
             </xpath>
+            <xpath expr="//button[@name='action_put_in_pack']" position="attributes">
+                <attribute name="groups">stock.group_stock_manager</attribute>
+            </xpath>
         </field>
     </record>
 
