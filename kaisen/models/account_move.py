@@ -18,7 +18,7 @@ class AccountMove(models.Model):
         compute_sudo=True,
     )
     last_payment_date = fields.Date(
-        string="Paid on",
+        string="Paid On",
         compute="_compute_last_payment_date",
         store=True,
     )
