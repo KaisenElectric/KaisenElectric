@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="kaisen_view_move_line_tree_inherit" model="ir.ui.view">
+        <field name="name">account.move.line.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_maturity']" position="after">
+                <field name="last_payment_date" optional="show"/>
+                <field name="stock_picking_names" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
