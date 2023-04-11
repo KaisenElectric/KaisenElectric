@@ -20,6 +20,12 @@
                     <span t-field="o.partner_id.registry_number"/>
                 </p>
             </xpath>
+            <xpath expr="//div[@name='origin']" position="attributes">
+                <attribute name="class">d-none</attribute>
+            </xpath>
+            <xpath expr="//div[@name='reference']" position="attributes">
+                <attribute name="class">d-none</attribute>
+            </xpath>
             <xpath expr="//span[@t-field='o.invoice_payment_term_id.note']" position="before">
                 <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
                     <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
