@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="kaisen_package_level_tree_view_picking" model="ir.ui.view">
+        <field name="name">Package Level Tree Picking</field>
+        <field name="model">stock.package_level</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'done'">
+                <field name="company_id"/>
+                <field name="package_id"
+                       attrs="{'readonly': [('state', 'in', ('confirmed', 'assigned', 'done', 'cancel'))]}"
+                       options="{'no_create': True}"/>
+                <field name="location_id" options="{'no_create': True}"
+                       attrs="{'column_invisible': [('parent.picking_type_code', '=', 'incoming')]}"/>
+                <field name="location_dest_id" options="{'no_create': True}"
+                       attrs="{'column_invisible': [('parent.picking_type_code', '=', 'outgoing')]}"/>
+                <field name="state"/>
+                <button name="action_show_package_details" title="Display package content" type="object"
+                        icon="fa-list"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="kaisen_package_level_form_view_inherit" model="ir.ui.view">
+        <field name="name">Package Level</field>
+        <field name="model">stock.package_level</field>
+        <field name="inherit_id" ref="stock.package_level_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="groups"></attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="package_level_action" model="ir.actions.act_window">
+        <field name="name">Package Level</field>
+        <field name="res_model">stock.package_level</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="kaisen.kaisen_package_level_tree_view_picking" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No data found!
+            </p>
+        </field>
+    </record>
+
+    <menuitem
+            id="menu_package_level"
+            name="Package Level"
+            parent="stock.menu_stock_config_settings"
+            action="kaisen.package_level_action"
+            groups="base.group_no_one"
+            sequence="302"
+    />
+
+
+</odoo>
