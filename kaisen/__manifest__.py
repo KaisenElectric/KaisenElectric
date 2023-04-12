@@ -53,6 +53,7 @@
         "views/product_template_views.xml",
         "views/product_product_views.xml",
         "views/account_move_line_views.xml",
+        "views/stock_package_level_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
         # REPORTS
