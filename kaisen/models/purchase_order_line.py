@@ -70,8 +70,9 @@ class PurchaseOrderLine(models.Model):
                                                                     values, po)
         res['product_packaging_id'] = values.get('product_packaging_id').id if values.get(
             'product_packaging_id') else False
-        if values.get("move_dest_ids"):
-            sale_line_id = values.get("move_dest_ids").sale_line_id
+        move_dest_ids = values.get("move_dest_ids")
+        if move_dest_ids:
+            sale_line_id = move_dest_ids.sale_line_id[:1]
             price_unit = sale_line_id.price_unit
             if sale_line_id.order_id.currency_id != po.currency_id:
                 price_unit = sale_line_id.order_id.currency_id._convert(from_amount=price_unit,
