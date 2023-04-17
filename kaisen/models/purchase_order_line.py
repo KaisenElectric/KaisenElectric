@@ -37,7 +37,7 @@ class PurchaseOrderLine(models.Model):
         results = super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
         for result in results:
             result["product_packaging_id"] = self.product_packaging_id.id
-            result["price_unit"] = self.move_dest_ids.sale_line_id.price_unit
+            result["price_unit"] = self.move_dest_ids.sale_line_id[:1].price_unit
         return results
 
     def _find_candidate(self, product_id, product_qty, product_uom, location_id, name, origin, company_id, values):
