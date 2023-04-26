@@ -49,7 +49,7 @@ class ProductTemplate(models.Model):
                 WHERE pt.id = %(product_template_id)s
             );
             """, {
-                "product_template_id": self.product_variant_id.product_tmpl_id.id,
+                "product_template_id": self.id,
             }
         )
 
@@ -77,7 +77,7 @@ class ProductTemplate(models.Model):
             JOIN product_template pt ON pp.product_tmpl_id = pt.id
             WHERE pt.id = %(product_template_id)s;
             """, {
-                "product_template_id": self.product_variant_id.product_tmpl_id.id,
+                "product_template_id": self.id,
                 "tag_ids": self.tag_ids.ids,
             }
         )
