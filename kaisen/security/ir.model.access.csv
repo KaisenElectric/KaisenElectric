@@ -2,3 +2,4 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 kaisen.access_external_integration,access_external_integration,kaisen.model_external_integration,base.group_user,1,1,1,1
 kaisen.access_import_of_cost_of_products_wizard,access_import_of_cost_of_products_wizard,kaisen.model_import_of_cost_of_products_wizard,base.group_user,1,1,1,1
 kaisen.access_product_tag,access_product_tag,kaisen.model_product_tag,base.group_user,1,1,1,1
+kaisen.access_stock_valuation_layer_user,access_stock_valuation_layer_user,model_stock_valuation_layer,stock.group_stock_user,1,1,1,0
