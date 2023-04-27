@@ -50,7 +50,7 @@ class ResPartner(models.Model):
             account_analytic_account_id = self.get_or_create_account_analytic_account()
         if self.country_id.name:
             account_analytic_tag_id = self.get_or_create_account_analytic_tag()
-        if not self.env.user.has_group("sales_team.group_sale_manager") and (self.user_id.name or self.country_id.name):
+        if not self.user_id.has_group("sales_team.group_sale_manager") and (self.user_id.name or self.country_id.name):
             account_analytic_default_id = self.get_or_create_account_analytic_default()
             account_analytic_default_id.write({
                 "analytic_id": account_analytic_account_id.id or account_analytic_default_id.analytic_id.id,
