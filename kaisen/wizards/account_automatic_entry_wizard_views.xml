@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_automatic_entry_wizard_form" model="ir.ui.view">
+        <field name="name">account.automatic.entry.wizard.form</field>
+        <field name="model">account.automatic.entry.wizard</field>
+        <field name="inherit_id" ref="account.account_automatic_entry_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/group/group[2]" position="attributes">
+                <attribute name="attrs">{'invisible': [('action', 'not in', ['change_account', 'change_partner'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='destination_account_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('action', '!=', 'change_account')], 'required': [('action', '=', 'change_account')]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='destination_account_id']" position="after">
+                <field name="partner_id" attrs="{'invisible': [('action', '!=', 'change_partner')], 'required': [('action', '=', 'change_partner')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='display_currency_helper']" position="after">
+                <field name="is_user_exist_in_lines" invisible="1"/>
+                <div attrs="{'invisible': [('is_user_exist_in_lines', '=', False)]}"  class="alert alert-info text-center" role="status">
+                        This user is exist in lines
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
