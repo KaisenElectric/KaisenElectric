@@ -56,6 +56,7 @@
         "views/stock_package_level_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
+        "wizards/account_automatic_entry_wizard_views.xml",
         # REPORTS
         "views/menus.xml",
         "reports/sale_report_templates.xml",
