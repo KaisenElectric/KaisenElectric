@@ -21,24 +21,24 @@ class StockMove(models.Model):
         """Computes product_packaging_qty by qty in packaging and product qty"""
         for record_id in self:
             product_packaging_qty = 0
-            if record_id.product_packaging_id.qty:
+            if record_id.product_packaging_id.qty > 0:
                 packaging_uom_id = record_id.product_packaging_id.product_uom_id
-                if record_id.picking_id.picking_type_id.code == "incoming" and record_id.quantity_done:
+                if record_id.picking_id.picking_type_id.code == "incoming" and record_id.quantity_done > 0:
                     product_packaging_qty = float_round(
                         record_id.quantity_done / record_id.product_packaging_id.qty,
                         precision_rounding=packaging_uom_id.rounding,
                     )
-                elif record_id.picking_id.picking_type_id.code == "outgoing" and record_id.forecast_availability:
+                elif record_id.picking_id.picking_type_id.code == "outgoing" and record_id.forecast_availability > 0:
                     product_packaging_qty = float_round(
                         record_id.forecast_availability / record_id.product_packaging_id.qty,
                         precision_rounding=packaging_uom_id.rounding,
                     )
-                elif record_id.picking_id.picking_type_id.code == "outgoing" and record_id.quantity_done:
+                elif record_id.picking_id.picking_type_id.code == "outgoing" and record_id.quantity_done > 0:
                     product_packaging_qty = float_round(
                         record_id.quantity_done / record_id.product_packaging_id.qty,
                         precision_rounding=packaging_uom_id.rounding,
                     )
-                else:
+                elif record_id.product_qty > 0:
                     product_packaging_qty = float_round(
                         record_id.product_qty / record_id.product_packaging_id.qty,
                         precision_rounding=packaging_uom_id.rounding,
