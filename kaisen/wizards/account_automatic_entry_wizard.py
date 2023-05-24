@@ -131,7 +131,7 @@ class AccountAutomaticEntryWizard(models.TransientModel):
                         and self.company_id.currency_id.round(-counterpart_vals["balance"])
                         or 0,
                         "account_id": account_id.id,
-                        "partner_id": counterpart_partner.id or None,
+                        "partner_id": self.partner_id.id or None,
                         "amount_currency": counterpart_currency.round(
                             (counterpart_vals["balance"] < 0 and -1 or 1) * abs(counterpart_vals["amount_currency"])
                         )
@@ -151,7 +151,7 @@ class AccountAutomaticEntryWizard(models.TransientModel):
                         "debit": account_balance < 0 and self.company_id.currency_id.round(-account_balance) or 0,
                         "credit": account_balance > 0 and self.company_id.currency_id.round(account_balance) or 0,
                         "account_id": account.id,
-                        "partner_id": self.partner_id.id or None,
+                        "partner_id": partner.id or None,
                         "currency_id": currency.id,
                         "amount_currency": (account_balance > 0 and -1 or 1) * abs(account_amount_currency),
                     }
