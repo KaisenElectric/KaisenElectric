@@ -23,6 +23,9 @@
             <xpath expr="//form" position="attributes">
                 <attribute name="js_class">kaisen_form</attribute>
             </xpath>
+            <xpath expr="//page/field[@name='order_line']/tree/field[@name='virtual_available_at_date']" position="after">
+                <field name="package_id" invisible="1"/>
+            </xpath>
         </field>
     </record>
 
