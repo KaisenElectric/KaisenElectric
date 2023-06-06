@@ -34,8 +34,6 @@ class SaleOrderLine(models.Model):
          1. The quotation has a commitment_date, we take it as delivery date
          2. The quotation hasn't commitment_date, we compute the estimated delivery
             date based on lead time"""
-        if not self.env["ir.config_parameter"].sudo().get_param("is_availability_including_packaging"):
-            return super()._compute_qty_at_date()
         treated = self.browse()
         # If the state is already in sale the picking is created and a simple forecasted quantity isn't enough
         # Then used the forecasted data of the related stock.move
