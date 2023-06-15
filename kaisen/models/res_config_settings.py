@@ -12,7 +12,7 @@ class ResConfigSettings(models.TransientModel):
     logismart_api_url = fields.Char(string="Logismart API URL")
     logismart_username = fields.Char(string="Logismart Username")
     logismart_password = fields.Char(string="Logismart Password")
-    is_availability_including_packaging = fields.Boolean(string="Availability Including Packaging")
+    is_availability_including_packaging = fields.Boolean(string="Availability including packaging")
 
     @api.model
     def set_values(self):
