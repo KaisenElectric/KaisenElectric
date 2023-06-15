@@ -33,6 +33,18 @@
                     </div>
                 </div>
             </xpath>
+            <xpath expr="//div[@id='stock_packaging']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box"
+                    id="availability_including_packaging">
+                    <div class="o_setting_left_pane">
+                        <field name="is_availability_including_packaging"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="is_availability_including_packaging"/>
+                    </div>
+                </div>
+            </xpath>
+
         </field>
     </record>
 
