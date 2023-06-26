@@ -43,6 +43,18 @@
                         <label for="is_availability_including_packaging"/>
                     </div>
                 </div>
+                <div class="col-12 col-lg-6 o_setting_box"
+                    id="check_product_in_stock_to_confirm_sale_order">
+                    <div class="o_setting_left_pane">
+                        <field name="is_check_product_in_stock_to_confirm_sale_order"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="is_check_product_in_stock_to_confirm_sale_order"/>
+                        <div class="text-muted">
+                            Do not confirm SO when not enough products/pack
+                        </div>
+                    </div>
+                </div>
             </xpath>
 
         </field>

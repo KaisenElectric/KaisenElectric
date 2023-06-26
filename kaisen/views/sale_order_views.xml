@@ -14,8 +14,8 @@
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='analytic_account_id']" position="after">
-                <field name="company_recipient_bank_id"/>
-                <field name="domain_bank_ids" invisible="1"/>
+                <field name="company_recipient_bank_id" domain="[('partner_id', '=', company_partner_id)]"/>
+                <field name="company_partner_id" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='analytic_tag_ids']" position="attributes">
                 <attribute name="required">True</attribute>
