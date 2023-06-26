@@ -13,6 +13,7 @@ class ResConfigSettings(models.TransientModel):
     logismart_username = fields.Char(string="Logismart Username")
     logismart_password = fields.Char(string="Logismart Password")
     is_availability_including_packaging = fields.Boolean(string="Availability Including Packaging")
+    is_check_product_in_stock_to_confirm_sale_order = fields.Boolean(string="Sale Order Confirmation")
 
     @api.model
     def set_values(self):
@@ -24,6 +25,7 @@ class ResConfigSettings(models.TransientModel):
         params.set_param("logismart_username", self.logismart_username)
         params.set_param("logismart_password", self.logismart_password)
         params.set_param("is_availability_including_packaging", self.is_availability_including_packaging)
+        params.set_param("is_check_product_in_stock_to_confirm_sale_order", self.is_check_product_in_stock_to_confirm_sale_order)
         return result
 
     @api.model
@@ -38,6 +40,7 @@ class ResConfigSettings(models.TransientModel):
                 "logismart_username": params.get_param("logismart_username"),
                 "logismart_password": params.get_param("logismart_password"),
                 "is_availability_including_packaging": params.get_param("is_availability_including_packaging"),
+                "is_check_product_in_stock_to_confirm_sale_order": params.get_param("is_check_product_in_stock_to_confirm_sale_order"),
             }
         )
         return result
