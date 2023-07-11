@@ -24,6 +24,7 @@ class SaleOrder(models.Model):
         related="company_id.partner_id",
         store=True,
     )
+    supply_warehouse_id = fields.Many2one(comodel_name="stock.warehouse", string="Supply Warehouse")
 
     @api.onchange("company_id")
     def _onchange_company_id(self):
@@ -32,9 +33,11 @@ class SaleOrder(models.Model):
         """
         for record in self:
             bank_id = self.company_id.partner_id.bank_ids[:1]
-            record.update({
-                "company_recipient_bank_id": bank_id.id,
-            })
+            record.update(
+                {
+                    "company_recipient_bank_id": bank_id.id,
+                }
+            )
 
     @api.model
     def _prepare_purchase_order_line_data(self, so_line, date_order, company):
@@ -58,8 +61,8 @@ class SaleOrder(models.Model):
 
     def _get_invoice_grouping_keys(self):
         """
-         Method adds partner_bank_id for grouping invoices.
-         """
+        Method adds partner_bank_id for grouping invoices.
+        """
         result = super()._get_invoice_grouping_keys()
         result.append("partner_bank_id")
         return result
@@ -77,11 +80,13 @@ class SaleOrder(models.Model):
                             will_be_fulfilled = line_id.free_qty_today >= line_id.qty_to_deliver
                         else:
                             will_be_fulfilled = line_id.virtual_available_at_date >= line_id.qty_to_deliver
-                        will_be_late = line_id.forecast_expected_date and line_id.forecast_expected_date > line_id.scheduled_date
+                        will_be_late = (
+                            line_id.forecast_expected_date and line_id.forecast_expected_date > line_id.scheduled_date
+                        )
                         if line_id.state in ("draft", "sent"):
                             forecasted_issue = not will_be_fulfilled and not line_id.is_mto
                         else:
-                            forecasted_issue = not line_id.will_be_fulfilled or will_be_late
+                            forecasted_issue = not will_be_fulfilled or will_be_late
                         if forecasted_issue:
                             raise UserError("Not enough selected products/packs in stock")
         return super().action_confirm()
