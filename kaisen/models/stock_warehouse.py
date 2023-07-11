@@ -29,6 +29,6 @@ class StockWarehouse(models.Model):
         Override method to allow searching records even if the current user
         does not have read access to them.
         """
-        if self.env.context.get("allow_wh"):
+        if self.env.context.get("allow_wh") or "supply_warehouse_id" in fields:
             self = self.sudo()
         return super()._read(fields)

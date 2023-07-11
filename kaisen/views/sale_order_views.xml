@@ -26,6 +26,9 @@
             <xpath expr="//page/field[@name='order_line']/tree/field[@name='virtual_available_at_date']" position="after">
                 <field name="package_id" invisible="1"/>
             </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="supply_warehouse_id" context="{'allow_wh': True}"/>
+            </xpath>
         </field>
     </record>
 

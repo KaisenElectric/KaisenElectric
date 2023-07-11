@@ -27,6 +27,7 @@ class SaleOrderLine(models.Model):
         "move_ids.forecast_expected_date",
         "move_ids.forecast_availability",
         "product_packaging_id.stock_quant_package_id",
+        "order_id.supply_warehouse_id",
     )
     def _compute_qty_at_date(self):
         """Compute the quantity forecasted of product at delivery date. There are
@@ -67,9 +68,11 @@ class SaleOrderLine(models.Model):
             if not (line.product_id and line.display_qty_widget):
                 continue
             # Kaisen: Changes start
+            self = self.sudo()
+            warehouse_id = line.order_id.supply_warehouse_id or line.warehouse_id
             grouped_lines[
                 (
-                    line.warehouse_id.id,
+                    warehouse_id.id,
                     line.order_id.commitment_date or line._expected_date(),
                     line.product_packaging_id.stock_quant_package_id.id,
                 )
