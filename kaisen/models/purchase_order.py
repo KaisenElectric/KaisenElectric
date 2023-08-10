@@ -13,6 +13,13 @@ class PurchaseOrder(models.Model):
         string="Same partner",
         invisible=True
     )
+    total_quantity = fields.Float(string="Total Quantity", compute="_compute_total_quantity")
+
+    @api.depends("order_line.product_qty")
+    def _compute_total_quantity(self):
+        """Computes total quantity by quantity in lines."""
+        for record_id in self:
+            record_id.total_quantity = sum(record_id.order_line.mapped("product_qty"))
 
     @api.depends("partner_id")
     def _compute_is_same_partner(self):

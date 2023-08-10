@@ -25,6 +25,9 @@
                        context="{'allow_wh': True}" domain="[('partner_id', '=', partner_id)]"
                        attrs="{'readonly': [('is_same_partner', '!=', True)], 'required': [('is_same_partner', '=', True)]}"/>
             </xpath>
+            <xpath expr="//field[@name='tax_totals_json']" position="after">
+                <field name="total_quantity" style="font-size:16px;font-weight: bold;"/>
+            </xpath>
         </field>
     </record>
 
