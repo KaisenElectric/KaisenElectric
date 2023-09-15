@@ -13,13 +13,17 @@
         <xpath expr="//t[@t-foreach='doc.order_line']" position="attributes">
             <attribute name="t-foreach">doc.with_context({'lang':doc.partner_id.lang}).order_line</attribute>
         </xpath>
-        <xpath expr="//td[@name='td_name']/span[@t-field='line.name']" position="attributes">
-            <attribute name="t-field">line.product_id.name</attribute>
-        </xpath>
         <xpath expr="//td[@name='td_name']" position="inside">
-            <t t-if="line.product_id.description_sale">
-                <br/><span t-field="line.product_id.description_sale"/>
+            <t t-if="line.product_id.type == 'service'">
+                <span t-field="line.product_id.name"/>
+                <t t-if="line.product_id.description_sale">
+                    <br/><span t-field="line.product_id.description_sale"/>
+                </t>
             </t>
+            <t t-else="" name="default"/>
+        </xpath>
+        <xpath expr="//td[@name='td_name']/t[@name='default']" position="inside">
+            <xpath expr="//td[@name='td_name']/span[@t-field='line.name']" position="move"/>
         </xpath>
 
         <xpath expr="//p[@t-field='doc.note']" position="before">
