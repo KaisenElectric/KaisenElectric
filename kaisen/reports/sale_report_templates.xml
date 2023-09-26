@@ -7,6 +7,24 @@
         <xpath expr="//p[@t-if='doc.partner_id.vat']" position="replace">
             <div t-if="doc.partner_id.vat"><t t-esc="doc.company_id.account_fiscal_country_id.vat_label or 'Tax ID'"/>: <span t-field="doc.partner_id.vat"/></div>
         </xpath>
+        <xpath expr="//t[@t-set='tax_totals']" position="attributes">
+            <attribute name="t-value">json.loads(doc.with_context({'lang':doc.partner_id.lang}).tax_totals_json)</attribute>
+        </xpath>
+        <xpath expr="//t[@t-foreach='doc.order_line']" position="attributes">
+            <attribute name="t-foreach">doc.with_context({'lang':doc.partner_id.lang}).order_line</attribute>
+        </xpath>
+        <xpath expr="//td[@name='td_name']" position="inside">
+            <t t-if="line.product_id.type == 'service'">
+                <span t-field="line.product_id.name"/>
+                <t t-if="line.product_id.description_sale">
+                    <br/><span t-field="line.product_id.description_sale"/>
+                </t>
+            </t>
+            <t t-else="" name="default"/>
+        </xpath>
+        <xpath expr="//td[@name='td_name']/t[@name='default']" position="inside">
+            <xpath expr="//td[@name='td_name']/span[@t-field='line.name']" position="move"/>
+        </xpath>
 
         <xpath expr="//p[@t-field='doc.note']" position="before">
             <t t-foreach="tax_totals['subtotals']" t-as="subtotal">

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="index" inherit_id="website_hr_recruitment.index">
+        <xpath expr="//span[@t-field='job.address_id']" position="replace"/>
+    </template>
+
+    <template id="detail" inherit_id="website_hr_recruitment.detail">
+        <xpath expr="//h5[@t-field='job.address_id']" position="replace"/>
+    </template>
+</odoo>
