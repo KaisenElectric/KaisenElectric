@@ -5,7 +5,7 @@
     "author": "ICode",
     "website": "https://icode.by/",
     "category": "Uncategorized",
-    "version": "15.0.1.0.7",
+    "version": "15.0.1.0.8",
     "license": "Other proprietary",
     "depends": [
         "base",
