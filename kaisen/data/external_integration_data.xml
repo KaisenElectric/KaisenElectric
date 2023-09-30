@@ -5,4 +5,8 @@
         <field name="name">Logismart</field>
     </record>
 
+    <record id="external_integration_enemer_fullfilment" model="external.integration">
+        <field name="name">eNemer - fullfilment</field>
+    </record>
+
 </odoo>
