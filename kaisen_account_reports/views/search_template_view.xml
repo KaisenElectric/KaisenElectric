@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <template id="search_template_partner" inherit_id="account_reports.search_template_partner">
+        <xpath expr="//ul[@role='menu']/li[hasclass('js_account_partner_m2m')]" position="inside">
+            <div>
+                <div class="container-fluid row">
+                    <div class="offset-4 col-4">
+                        <input name="partners_include_exclude" type="radio" value="include" t-att-checked="options.get('partners_include_exclude') and 'checked'"/> include
+                    </div>
+                    <div class="col-4">
+                        <input name="partners_include_exclude" type="radio" value="exclude" t-att-checked="not options.get('partners_include_exclude') and 'checked'"/> exclude
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</data>
+</odoo>
