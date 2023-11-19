@@ -17,5 +17,11 @@
         </xpath>
     </template>
 
+    <template id="search_template_extra_options" inherit_id="account_reports.search_template_extra_options">
+        <xpath expr="div[@role='menu']" position="inside">
+            <a role="menuitem" class="dropdown-item js_account_report_bool_filter" t-if="options.get('group_by_saleperson') != None" title="Group by Saleperson" data-filter="group_by_saleperson">Group by Saleperson</a>
+        </xpath>
+    </template>
+
 </data>
 </odoo>
