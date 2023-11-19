@@ -6,7 +6,7 @@
     """,
     "author": "Kaisen",
     'category': 'Accounting/Accounting',
-    "version": "15.0.0.0.1",
+    "version": "15.0.0.0.2",
     "license": "Other proprietary",
     "depends": [
         "account_reports",
