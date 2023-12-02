@@ -98,6 +98,6 @@ class AccountMove(models.Model):
             sale_order_ids = self.invoice_line_ids.sale_line_ids.order_id
             if (self.env.user.has_group('kaisen.group_personal_lead') and sale_order_ids.user_id == self.env.user)\
                     or (self.env.user.has_group('kaisen.group_team_lead')
-                        and set(sale_order_ids.team_id.ids) == set(self.env.user.crm_team_ids.ids)):
+                        and set(sale_order_ids.team_id.ids) ^ set(self.env.user.crm_team_ids.ids)):
                 return super(AccountMove, self.sudo()).button_draft()
         return super().button_draft()
