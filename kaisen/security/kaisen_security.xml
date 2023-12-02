@@ -128,9 +128,20 @@
         <value eval="{'noupdate': True}"/>
     </function>
 
-    <record model="ir.rule" id="team_lead_rule">
-        <field name="name">Team Lead</field>
+    <record model="ir.rule" id="account_team_lead_rule">
+        <field name="name">Account Team Lead</field>
         <field name="model_id" ref="account.model_account_invoice_report"/>
+        <field name="domain_force">[('team_id','in', user.crm_team_ids.ids)]</field>
+        <field name="groups" eval="[(4, ref('kaisen.group_team_lead'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record model="ir.rule" id="crm_team_lead_rule">
+        <field name="name">CRM Team Lead</field>
+        <field name="model_id" ref="crm.model_crm_lead"/>
         <field name="domain_force">[('team_id','in', user.crm_team_ids.ids)]</field>
         <field name="groups" eval="[(4, ref('kaisen.group_team_lead'))]"/>
         <field name="perm_read" eval="True"/>
