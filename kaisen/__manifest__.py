@@ -5,7 +5,7 @@
     "author": "ICode",
     "website": "https://icode.by/",
     "category": "Uncategorized",
-    "version": "15.0.1.0.8",
+    "version": "15.0.1.0.10",
     "license": "Other proprietary",
     "depends": [
         "base",
@@ -34,6 +34,7 @@
         "security/ir.model.access.csv",
         # DATA
         "data/external_integration_data.xml",
+        "data/report_paperformat_data.xml",
         # VIEWS
         "views/stock_picking_views.xml",
         "views/res_config_settings_views.xml",

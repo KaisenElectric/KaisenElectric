@@ -3,3 +3,5 @@ kaisen.access_external_integration,access_external_integration,kaisen.model_exte
 kaisen.access_import_of_cost_of_products_wizard,access_import_of_cost_of_products_wizard,kaisen.model_import_of_cost_of_products_wizard,base.group_user,1,1,1,1
 kaisen.access_product_tag,access_product_tag,kaisen.model_product_tag,base.group_user,1,1,1,1
 kaisen.access_stock_valuation_layer_user,access_stock_valuation_layer_user,model_stock_valuation_layer,stock.group_stock_user,1,1,1,0
+access_product_pricelist_read_write,Access Read and Write Pricelist,product.model_product_pricelist,kaisen.group_pricelist_read_write,1,1,0,0
+access_product_pricelist_item_modify,Access Modify Pricelist Item,product.model_product_pricelist_item,kaisen.group_pricelist_read_write,1,1,1,1

@@ -170,4 +170,10 @@
                eval="[(6, 0, [ref('account.group_account_manager'), ref('account.group_account_user')])]"/>
     </record>
 
+    <record id="group_pricelist_read_write" model="res.groups">
+        <field name="name">User: Read &amp; Write Pricelist</field>
+        <field name="category_id" ref="base.module_category_sales_sales"/>
+        <field name="comment">The user will have access to open and modify pricelists.</field>
+    </record>
+
 </odoo>
