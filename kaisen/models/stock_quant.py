@@ -23,7 +23,12 @@ class StockQuant(models.Model):
     )
     tag_ids = fields.Many2many(
         comodel_name="product.tag",
+        relation="product_tag_stock_quant_rel",
+        column1="stock_quant_id",
+        column2="product_tag_id",
         string="Tags",
+        manual=True,
+        copy=False,
     )
 
     @api.depends("inventory_quantity_auto_apply")
@@ -59,15 +64,3 @@ class StockQuant(models.Model):
             return float_round(quantity / packaging_id.qty,
                                precision_rounding=packaging_id.product_uom_id.rounding or 0.01)
         return 0
-
-    @api.model
-    def create(self, vals):
-        """
-        Method added tag_ids for SQ
-        """
-        quant_id = super(StockQuant, self).create(vals)
-        if quant_id.product_tmpl_id.tag_ids:
-            quant_id.write({
-                "tag_ids": [(4, tag_id) for tag_id in quant_id.product_tmpl_id.tag_ids.ids]
-            })
-        return quant_id

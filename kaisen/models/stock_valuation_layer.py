@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import api, models, fields
 
 
 class StockValuationLayer(models.Model):
@@ -16,7 +16,12 @@ class StockValuationLayer(models.Model):
     )
     tag_ids = fields.Many2many(
         comodel_name="product.tag",
+        relation="product_tag_stock_valuation_layer_rel",
+        column1="stock_valuation_layer_id",
+        column2="product_tag_id",
         string="Tags",
+        manual=True,
+        copy=False,
     )
 
     def create(self, values):
