@@ -20,9 +20,6 @@ def _prepare_out_svl_vals(self, quantity, company, warehouse_id=None):
         'value': currency.round(quantity * self.standard_price),
         'unit_cost': self.standard_price,
         'quantity': quantity,
-        # Kaisen: Changes start
-        "tag_ids": [(4, tag_id) for tag_id in self.tag_ids.ids],
-        # Kaisen: Changes end
     }
     # Kaisen: Changes start
     if self.cost_method in ("average", "fifo", "fifowh"):
@@ -142,9 +139,6 @@ def _prepare_in_svl_vals(self, quantity, unit_cost):
         'value': company.currency_id.round(unit_cost * quantity),
         'unit_cost': unit_cost,
         'quantity': quantity,
-        # Kaisen: Changes start
-        "tag_ids": [(4, tag_id) for tag_id in self.tag_ids.ids],
-        # Kaisen: Changes end
     }
     # Kaisen: Changes start
     if self.cost_method in ("average", "fifo", "fifowh"):
@@ -251,9 +245,6 @@ def _run_fifo_vacuum(self, company=None, id_warehouse=None):
             'company_id': move.company_id.id,
             'description': 'Revaluation of %s (negative inventory)' % move.picking_id.name or move.name,
             'stock_valuation_layer_id': svl_to_vacuum.id,
-            # Kaisen: Changes start
-            "tag_ids": [(4, tag_id) for tag_id in self.tag_ids.ids],
-            # Kaisen: Changes end
         }
         vacuum_svl = self.env['stock.valuation.layer'].sudo().create(vals)
 
