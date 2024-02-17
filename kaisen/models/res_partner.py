@@ -7,6 +7,12 @@ class ResPartner(models.Model):
     registry_number = fields.Char(string="Registry Number")
     user_id = fields.Many2one(inverse="_inverse_user_id")
     country_id = fields.Many2one(inverse="_inverse_country_id")
+    has_default_analytic_rule = fields.Boolean(
+        string="Default Analytic Rule",
+        compute="_compute_has_default_analytic_rule",
+        inverse="_inverse_has_default_analytic_rule",
+        readonly=False,
+    )
 
     @api.onchange("user_id")
     def _onchange_user_id(self):
@@ -96,3 +102,58 @@ class ResPartner(models.Model):
         )
         return account_analytic_default_id
 
+    def _compute_has_default_analytic_rule(self):
+        partner_with_rule_ids = self.env["account.analytic.default"].search([
+            ("partner_id", "in", self.ids)
+        ]).partner_id
+        partner_with_rule_ids.update({"has_default_analytic_rule": True})
+        (self - partner_with_rule_ids).update({"has_default_analytic_rule": False})
+
+    def _prepare_data_for_new_rules(self):
+        analytic_account_by_user = {}
+        new_analytic_account = self.user_id.mapped('name')
+        for analytic_account_id in  self.env["account.analytic.account"].search([
+            ("name", "in", new_analytic_account)
+        ]):
+            analytic_account_by_user[analytic_account_id.name] = analytic_account_id.id
+        new_analytic_account = set(new_analytic_account) - analytic_account_by_user.keys()
+        if new_analytic_account:
+            for analytic_account_id in self.env["account.analytic.account"].create([
+                {"name": name} for name in new_analytic_account
+            ]):
+                analytic_account_by_user[analytic_account_id.name] = analytic_account_id.id
+
+        analytic_tag_by_country = {}
+        new_analytic_tag = self.country_id.mapped('name')
+        for analytic_tag_id in  self.env["account.analytic.tag"].search([
+            ("name", "in", new_analytic_tag)
+        ]):
+            analytic_tag_by_country[analytic_tag_id.name] = analytic_tag_id.id
+        new_analytic_tag = set(new_analytic_tag) - analytic_tag_by_country.keys()
+        if new_analytic_tag:
+            for analytic_tag_id in self.env["account.analytic.tag"].create([
+                {"name": name} for name in new_analytic_tag
+            ]):
+                analytic_tag_by_country[analytic_tag_id.name] = analytic_tag_id.id
+        result = []
+        for partner_id in self:
+            data = {}
+            if partner_id.user_id.name in analytic_account_by_user:
+                data['analytic_id'] = analytic_account_by_user[partner_id.user_id.name]
+            if partner_id.country_id.name in analytic_tag_by_country:
+                data['analytic_tag_ids'] = [(6, 0, [analytic_tag_by_country[partner_id.country_id.name]])]
+            if data:
+                result.append({**data, "partner_id": partner_id.id})
+        return result
+
+    def _inverse_has_default_analytic_rule(self):
+        partner_with_rule_ids = self.env["account.analytic.default"].search([
+            ("partner_id", "in", self.ids)
+        ]).partner_id
+        self_with_rule_ids = self.filtered('has_default_analytic_rule')
+        new_rules = (self_with_rule_ids - partner_with_rule_ids)._prepare_data_for_new_rules()
+        if new_rules:
+            self.env["account.analytic.default"].create(new_rules)
+        self.env["account.analytic.default"].search([
+            ("partner_id", "in", (partner_with_rule_ids & (self - self_with_rule_ids)).ids)
+        ]).unlink()
