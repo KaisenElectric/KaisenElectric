@@ -5,7 +5,7 @@
     "author": "ICode",
     "website": "https://icode.by/",
     "category": "Uncategorized",
-    "version": "15.0.1.0.12",
+    "version": "15.0.1.0.13",
     "license": "Other proprietary",
     "depends": [
         "base",
@@ -63,6 +63,7 @@
         "views/menus.xml",
         "reports/sale_report_templates.xml",
         "reports/invoice_report_templates.xml",
+        "views/account_invoice_report_view.xml",
     ],
     "assets": {
         "web.assets_backend": [
