@@ -24,6 +24,13 @@ class StockValuationLayer(models.Model):
         copy=False,
     )
 
+    category_id = fields.Many2one(
+        comodel_name="product.category",
+        related="product_id.categ_id",
+        string="Category",
+        store=True,
+    )
+
     def create(self, values):
         result = super().create(values)
         if self.env.context.get("force_period_date") and result.id:
