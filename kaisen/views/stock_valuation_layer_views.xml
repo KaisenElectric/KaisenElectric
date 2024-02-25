@@ -8,6 +8,7 @@
             <xpath expr="//field[@name='company_id']" position="after">
                 <field name="warehouse_id"/>
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                <field name="category_id" optional="show"/>
             </xpath>
         </field>
     </record>
@@ -29,6 +30,7 @@
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='group_by_product_id']" position="after">
                 <filter string="Tags" name="tag_ids" context="{'group_by': 'tag_ids'}"/>
+                <filter string="Category" name="category_id" context="{'group_by': 'category_id'}"/>
             </xpath>
         </field>
     </record>
