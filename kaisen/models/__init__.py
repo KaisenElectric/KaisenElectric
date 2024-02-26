@@ -30,3 +30,4 @@ from . import stock_warehouse
 from . import product_tag
 from . import product_template
 from . import report_stock_forecasted
+from . import account_invoice_report

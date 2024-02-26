@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="account_invoice_report_view_tree" model="ir.ui.view">
+        <field name="name">account.invoice.report.view.tree</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.account_invoice_report_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="product_tag_ids" widget="many2many_tags" optional="show"/>
+            </xpath>
+         </field>
+     </record>
+
+    <record id="view_account_invoice_report_search" model="ir.ui.view">
+        <field name="name">account.invoice.report.search</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='category_product']" position="after">
+                <filter string="Product Tags" name="product_tag_ids" context="{'group_by':'product_tag_ids'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

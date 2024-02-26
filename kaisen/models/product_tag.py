@@ -61,4 +61,12 @@ class ProductTag(models.Model):
                 JOIN product_template pt ON pp.product_tmpl_id = pt.id 
                 JOIN product_tag_product_template_rel pr ON pr.product_template_id = pt.id
             );
+            
+            CREATE or REPLACE VIEW product_tag_account_move_line_rel AS (
+                SELECT aml.id AS account_move_line_id, pr.product_tag_id
+                FROM account_move_line aml
+                JOIN product_product pp ON pp.id = aml.product_id
+                JOIN product_template pt ON pp.product_tmpl_id = pt.id
+                JOIN product_tag_product_template_rel pr ON pr.product_template_id = pt.id
+            );
         """)
