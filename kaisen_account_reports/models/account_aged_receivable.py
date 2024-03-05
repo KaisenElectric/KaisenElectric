@@ -107,3 +107,20 @@ class ReportAccountAgedReceivable(models.Model):
         options = self._get_options(options)
         options['unfolded_lines'] = []
         return super().get_report_informations(options)
+
+    def _append_grouped(self, lines, current, line_dict, value_getters, value_formatters, options, hidden_lines):
+        if not line_dict['values']:
+            return
+        return super()._append_grouped(lines, current, line_dict, value_getters, value_formatters, options, hidden_lines)
+
+    @api.model
+    def _get_lines(self, options, line_id=None):
+        lines = super()._get_lines(options, line_id)
+        if options.get('group_by_saleperson') is not True or not line_id:
+            return lines
+
+        for line in lines:
+            if line['id'] == line_id:
+                line['parent_id'] = None
+                break
+        return lines
