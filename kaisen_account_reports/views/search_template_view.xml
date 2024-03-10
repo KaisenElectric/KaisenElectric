@@ -23,5 +23,23 @@
         </xpath>
     </template>
 
+    <template id="search_template_saleperson">
+        <button t-if="options.get('saleperson')" type="button" class="o-no-caret btn btn-secondary dropdown-toggle account_saleperson_filter" data-toggle="dropdown">
+            <span class="fa fa-folder-open"/> Saleperson
+        </button>
+        <ul class="dropdown-menu o_filter_menu" role="menu">
+            <li class="o_account_report_search js_account_saleperson_m2m"/>
+        </ul>
+    </template>
+
+    <template id="search_template" inherit_id="account_reports.search_template">
+        <xpath expr="//div[hasclass('o_account_reports_filter_partner')]" position="after">
+            <t t-log="options"/>
+            <div class="btn-group dropdown o_account_reports_filter_saleperson" t-if="options.get('saleperson')">
+                <t t-call="kaisen_account_reports.search_template_saleperson"/>
+            </div>
+        </xpath>
+    </template>
+
 </data>
 </odoo>

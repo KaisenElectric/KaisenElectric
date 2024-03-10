@@ -5,6 +5,7 @@ class ReportAccountAgedReceivable(models.Model):
     _inherit = "account.aged.receivable"
 
     filter_group_by_saleperson = False
+    filter_saleperson = True
 
     saleperson_id = fields.Many2one('res.users')
     saleperson_name = fields.Char(group_operator='max')
