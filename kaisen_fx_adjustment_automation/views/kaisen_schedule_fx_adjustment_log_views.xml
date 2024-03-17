@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="schedule_fx_adjustment_log_tree" model="ir.ui.view">
+        <field name="name">kaisen.schedule.fx.adjustment.log.tree</field>
+        <field name="model">kaisen.schedule.fx.adjustment.log</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="schedule_id"/>
+                <field name="move_id"/>
+                <button string="Open" name="open_move_id" type="object" attrs="{'invisible': [('move_id', '=', False)]}"/>
+                <field name="reverse_move_id"/>
+                <button string="Open" name="open_reverse_move_id" type="object" attrs="{'invisible': [('reverse_move_id', '=', False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="schedule_fx_adjustment_log_action" model="ir.actions.act_window">
+        <field name="name">Schedule of Currency Adjustment Automation LOG</field>
+        <field name="res_model">kaisen.schedule.fx.adjustment.log</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+</odoo>
