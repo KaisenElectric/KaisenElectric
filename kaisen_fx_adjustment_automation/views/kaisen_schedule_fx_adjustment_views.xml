@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="schedule_fx_adjustment_form" model="ir.ui.view">
+        <field name="name">kaisen.schedule.fx.adjustment.form</field>
+        <field name="model">kaisen.schedule.fx.adjustment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <label for="interval_number" string="Execute Every"/>
+                            <div>
+                                <field name="interval_number" class="oe_inline"/><![CDATA[&nbsp;]]>
+                                <field name="interval_type" style="width:70px !important;" class="oe_inline"/>
+                            </div>
+                            <field name="next_call"/>
+                            <field name="last_call"/>
+                        </group>
+                        <group>
+                            <field name="apply_company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="schedule_fx_adjustment_tree" model="ir.ui.view">
+        <field name="name">kaisen.schedule.fx.adjustment.tree</field>
+        <field name="model">kaisen.schedule.fx.adjustment</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="interval_number"/>
+                <field name="interval_type"/>
+                <field name="next_call"/>
+                <field name="last_call"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="schedule_fx_adjustment_action" model="ir.actions.act_window">
+        <field name="name">Schedule of Currency Adjustment Automation</field>
+        <field name="res_model">kaisen.schedule.fx.adjustment</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_schedule_fx_adjustment"
+              name="Schedule FX Adjustment"
+              parent="account.account_management_menu"
+              action="schedule_fx_adjustment_action"
+              sequence="10"
+              groups="account.group_account_manager"/>
+
+</odoo>
