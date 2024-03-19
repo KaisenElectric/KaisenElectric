@@ -31,6 +31,12 @@ class StockValuationLayer(models.Model):
         store=True,
     )
 
+    analytic_account_id = fields.Many2one(
+        related="warehouse_id.analytic_account_id",
+        string="Analytic Account",
+        store=True,
+    )
+
     def create(self, values):
         result = super().create(values)
         if self.env.context.get("force_period_date") and result.id:
