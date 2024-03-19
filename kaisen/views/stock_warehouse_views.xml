@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_warehouse_form" model="ir.ui.view">
+        <field name="name">stock.warehouse.form</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="analytic_account_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="stock_warehouse_tree" model="ir.ui.view">
+        <field name="name">stock.warehouse.tree</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="after">
+                <field name="analytic_account_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="stock_warehouse_search" model="ir.ui.view">
+        <field name="name">stock.warehouse.search</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.stock_warehouse_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <group expand="0" string="Group By">
+                    <filter string="Analytic Account" name="analytic_account" domain="[]" context="{'group_by': 'analytic_account_id'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
