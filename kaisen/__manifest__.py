@@ -5,7 +5,7 @@
     "author": "ICode",
     "website": "https://icode.by/",
     "category": "Uncategorized",
-    "version": "15.0.1.0.14",
+    "version": "15.0.1.0.15",
     "license": "Other proprietary",
     "depends": [
         "base",
@@ -56,6 +56,7 @@
         "views/product_product_views.xml",
         "views/account_move_line_views.xml",
         "views/stock_package_level_views.xml",
+        "views/stock_warehouse_views.xml",
         # WIZARDS
         "wizards/import_of_cost_of_products_wizard_views.xml",
         "wizards/account_automatic_entry_wizard_views.xml",

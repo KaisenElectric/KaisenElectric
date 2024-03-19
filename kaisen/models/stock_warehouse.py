@@ -1,8 +1,13 @@
-from odoo import models, api
+from odoo import api, fields, models
 
 
 class StockWarehouse(models.Model):
     _inherit = "stock.warehouse"
+
+    analytic_account_id = fields.Many2one(
+        "account.analytic.account",
+        string="Analytic Account",
+    )
 
     @api.model
     def name_search(self, name="", args=None, operator="ilike", limit=100):
