@@ -31,13 +31,14 @@ class SaleOrder(models.Model):
         """
         Method change company_recipient_bank_id depends on company_id
         """
-        for record in self:
-            bank_id = self.company_id.partner_id.bank_ids[:1]
-            record.update(
-                {
-                    "company_recipient_bank_id": bank_id.id,
-                }
-            )
+        self.company_recipient_bank_id = self.company_id.partner_id.bank_ids[:1]
+        self.pricelist_id = self.with_company(self.company_id).partner_id.property_product_pricelist
+
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        if self.company_id and self.company_id != self.env.company:
+            return super(SaleOrder, self.with_company(self.company_id)).onchange_partner_id()
+        return super().onchange_partner_id()
 
     @api.model
     def _prepare_purchase_order_line_data(self, so_line, date_order, company):
