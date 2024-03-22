@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-from odoo.tools.float_utils import float_round
+from odoo.tools.float_utils import float_round, float_is_zero
 
 
 class StockQuant(models.Model):
@@ -64,3 +64,17 @@ class StockQuant(models.Model):
             return float_round(quantity / packaging_id.qty,
                                precision_rounding=packaging_id.product_uom_id.rounding or 0.01)
         return 0
+
+    @api.depends('company_id', 'location_id', 'owner_id', 'product_id', 'quantity')
+    def _compute_value(self):
+        quant_fifowh_ids = self.filtered(lambda q: q.product_id.cost_method == 'fifowh')
+        super(StockQuant, self - quant_fifowh_ids)._compute_value()
+        for quant in quant_fifowh_ids:
+            id_warehouse = quant.location_id.warehouse_id.id
+            quant = quant.with_context(warehouse=id_warehouse)
+            quantity = quant.product_id.with_company(quant.company_id).quantity_svl
+            if float_is_zero(quantity, precision_rounding=quant.product_id.uom_id.rounding):
+                quant.value = 0.0
+                continue
+            average_cost = quant.product_id.with_company(quant.company_id).value_svl / quantity
+            quant.value = quant.quantity * average_cost
