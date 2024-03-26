@@ -31,6 +31,12 @@ class StockQuant(models.Model):
         copy=False,
     )
 
+    analytic_account_id = fields.Many2one(
+        related="location_id.warehouse_id.analytic_account_id",
+        string="Analytic Account",
+        store=True,
+    )
+
     @api.depends("inventory_quantity_auto_apply")
     def _compute_on_hand_package_quantity(self):
         """Computes on_hand_package_quantity by inventory_quantity_auto_apply"""
