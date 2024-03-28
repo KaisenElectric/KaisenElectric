@@ -75,6 +75,7 @@
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='company']" position="after">
                 <filter string="Tags" name="tag_ids" context="{'group_by': 'tag_ids'}"/>
+                <filter string="Analytic Account" name="analytic_account_id" context="{'group_by': 'analytic_account_id'}"/>
             </xpath>
         </field>
     </record>
